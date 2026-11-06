@@ -9,6 +9,7 @@ import '../../data/repositories/attendance_repository.dart';
 import '../../data/repositories/library_repository.dart';
 import '../../data/repositories/campus_feed_repository.dart';
 import '../../data/repositories/scanner_repository.dart';
+import '../../data/repositories/transcript_repository.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -51,5 +52,9 @@ Future<void> setupServiceLocator({
 
   sl.registerSingleton<ScannerRepository>(
     ScannerRepository(bridge: cameraBridge),
+  );
+
+  sl.registerSingleton<TranscriptRepository>(
+    TranscriptRepository(database: db),
   );
 }

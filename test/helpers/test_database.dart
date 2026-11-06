@@ -108,6 +108,15 @@ Future<AppDatabase> createTestDatabase() async {
         )
       ''');
 
+      await db.execute('''
+        CREATE TABLE academic_transcripts (
+          id TEXT PRIMARY KEY,
+          semester_name TEXT NOT NULL,
+          credit_hours INTEGER NOT NULL,
+          gpa REAL NOT NULL
+        )
+      ''');
+
       // Seed core test course
       await db.insert('courses', {
         'id': 'crs_01',
@@ -167,6 +176,20 @@ Future<AppDatabase> createTestDatabase() async {
         'comments_count': 0,
         'is_bookmarked': 0,
       });
+
+      // Seed 7 Historical Semesters for Safeer Hussain (CGPA 3.94)
+      final transcripts = [
+        {'id': 'sem_01', 'semester_name': 'Semester 1 (Fall 2023)', 'credit_hours': 17, 'gpa': 3.92},
+        {'id': 'sem_02', 'semester_name': 'Semester 2 (Spring 2024)', 'credit_hours': 18, 'gpa': 3.95},
+        {'id': 'sem_03', 'semester_name': 'Semester 3 (Fall 2024)', 'credit_hours': 17, 'gpa': 3.90},
+        {'id': 'sem_04', 'semester_name': 'Semester 4 (Spring 2025)', 'credit_hours': 18, 'gpa': 3.96},
+        {'id': 'sem_05', 'semester_name': 'Semester 5 (Fall 2025)', 'credit_hours': 16, 'gpa': 3.94},
+        {'id': 'sem_06', 'semester_name': 'Semester 6 (Spring 2026)', 'credit_hours': 16, 'gpa': 3.98},
+        {'id': 'sem_07', 'semester_name': 'Semester 7 (Fall 2026)', 'credit_hours': 16, 'gpa': 3.92},
+      ];
+      for (final t in transcripts) {
+        await db.insert('academic_transcripts', t);
+      }
     },
   );
 

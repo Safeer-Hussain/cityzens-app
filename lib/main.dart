@@ -11,11 +11,13 @@ import 'data/repositories/attendance_repository.dart';
 import 'data/repositories/library_repository.dart';
 import 'data/repositories/campus_feed_repository.dart';
 import 'data/repositories/scanner_repository.dart';
+import 'data/repositories/transcript_repository.dart';
 import 'presentation/attendance/attendance_provider.dart';
 import 'presentation/library/library_provider.dart';
 import 'presentation/scanner/scanner_provider.dart';
 import 'presentation/ai_tutor/ai_tutor_provider.dart';
 import 'presentation/campus/campus_feed_provider.dart';
+import 'presentation/gpa_calculator/gpa_calculator_provider.dart';
 import 'presentation/splash/splash_view.dart';
 
 void main() {
@@ -75,6 +77,9 @@ class CityzensApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<CampusFeedProvider>(
           create: (_) => CampusFeedProvider(repository: sl<CampusFeedRepository>()),
+        ),
+        ChangeNotifierProvider<GpaCalculatorProvider>(
+          create: (_) => GpaCalculatorProvider(repository: sl<TranscriptRepository>()),
         ),
       ],
       child: Consumer<ThemeProvider>(

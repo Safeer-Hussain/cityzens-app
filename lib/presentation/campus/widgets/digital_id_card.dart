@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../gpa_calculator/gpa_calculator_view.dart';
 
 class DigitalIdCard extends StatelessWidget {
   final VoidCallback? onLongPressVersion;
@@ -140,12 +141,23 @@ class DigitalIdCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildIdStat(
-                      label: 'Cumulative CGPA',
-                      value: '3.94 / 4.00',
-                      subtext: 'Summa Cum Laude',
-                      colors: colors,
-                      color: colors.secondary,
+                    InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const GpaCalculatorView()),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                        child: _buildIdStat(
+                          label: 'Cumulative CGPA',
+                          value: '3.94 / 4.00',
+                          subtext: 'Tap for What-If',
+                          colors: colors,
+                          color: colors.secondary,
+                        ),
+                      ),
                     ),
                     Container(width: 1, height: 32, color: colors.outlineVariant),
                     _buildIdStat(
@@ -164,6 +176,39 @@ class DigitalIdCard extends StatelessWidget {
                       color: colors.tertiary,
                     ),
                   ],
+                ),
+                const SizedBox(height: 10),
+                // What-If Simulator Shortcut Action
+                InkWell(
+                  borderRadius: BorderRadius.circular(8),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const GpaCalculatorView()),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: colors.primaryContainer.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.calculate_outlined, size: 14, color: colors.primary),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Open Semester GPA & Honors Simulator',
+                          style: TextStyle(
+                            color: colors.primary,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Divider(color: colors.outlineVariant),

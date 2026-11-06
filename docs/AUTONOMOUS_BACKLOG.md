@@ -4,7 +4,7 @@ This backlog defines 25 granular, production-ready engineering sprints. Promptin
 
 ---
 
-- [ ] **Sprint 01: Semester GPA/CGPA What-If Projection Calculator**
+- [x] **Sprint 01: Semester GPA/CGPA What-If Projection Calculator**
   - Interactive credit hours and target grade slider simulation.
   - Recalculates projected graduation honors and stores historical grade transcripts in SQLite.
   - Comprehensive unit tests verifying GPA calculation formulas.

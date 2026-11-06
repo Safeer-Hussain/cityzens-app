@@ -5,6 +5,7 @@ import '../../core/di/service_locator.dart';
 import '../attendance/attendance_provider.dart';
 import '../library/library_provider.dart';
 import '../campus/campus_feed_provider.dart';
+import '../gpa_calculator/gpa_calculator_provider.dart';
 import '../scanner/scanner_provider.dart';
 import '../shell/adaptive_scaffold.dart';
 
@@ -86,11 +87,13 @@ class _SplashViewState extends State<SplashView>
       final attendanceProvider = Provider.of<AttendanceProvider>(context, listen: false);
       final libraryProvider = Provider.of<LibraryProvider>(context, listen: false);
       final campusFeedProvider = Provider.of<CampusFeedProvider>(context, listen: false);
+      final gpaProvider = Provider.of<GpaCalculatorProvider>(context, listen: false);
 
       await Future.wait([
         attendanceProvider.loadAttendanceData(),
         libraryProvider.loadLibraryData(),
         campusFeedProvider.loadFeed(),
+        gpaProvider.loadTranscripts(),
       ]);
 
       if (!mounted) return;
