@@ -1,0 +1,227 @@
+import 'package:flutter/material.dart';
+
+class DigitalIdCard extends StatelessWidget {
+  final VoidCallback? onLongPressVersion;
+
+  const DigitalIdCard({super.key, this.onLongPressVersion});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: colors.surfaceContainer,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colors.outlineVariant),
+        boxShadow: [
+          BoxShadow(
+            color: colors.shadow.withValues(alpha: 0.15),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Header Badge Banner
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [colors.primary, colors.secondary],
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.shield_outlined, color: colors.onPrimary, size: 16),
+                    const SizedBox(width: 6),
+                    Text(
+                      'CITYZENS SMART CAMPUS ID',
+                      style: TextStyle(
+                        color: colors.onPrimary,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.0,
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  'ACADEMIC 2026/2027',
+                  style: TextStyle(
+                    color: colors.onPrimary.withValues(alpha: 0.9),
+                    fontSize: 9,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Profile Avatar
+                    Container(
+                      width: 58,
+                      height: 58,
+                      decoration: BoxDecoration(
+                        color: colors.primaryContainer,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: colors.primary, width: 1.5),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        'SH',
+                        style: TextStyle(
+                          color: colors.primary,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'Safeer Hussain',
+                                style: TextStyle(
+                                  color: colors.onSurface,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Icon(Icons.verified_rounded, size: 16, color: colors.secondary),
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Senior Mobile Architect  •  CS Honours',
+                            style: TextStyle(
+                              color: colors.onSurfaceVariant,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'ID: CTZ-2026-8842',
+                            style: TextStyle(
+                              color: colors.primary,
+                              fontSize: 11,
+                              fontFamily: 'monospace',
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Divider(color: colors.outlineVariant),
+                const SizedBox(height: 8),
+                // CGPA & Honors row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildIdStat(
+                      label: 'Cumulative CGPA',
+                      value: '3.94 / 4.00',
+                      subtext: 'Summa Cum Laude',
+                      colors: colors,
+                      color: colors.secondary,
+                    ),
+                    Container(width: 1, height: 32, color: colors.outlineVariant),
+                    _buildIdStat(
+                      label: 'Security Tier',
+                      value: 'Tier 1 Clearance',
+                      subtext: '24/7 Lab Access',
+                      colors: colors,
+                      color: colors.primary,
+                    ),
+                    Container(width: 1, height: 32, color: colors.outlineVariant),
+                    _buildIdStat(
+                      label: 'Total Credits',
+                      value: '136 / 140',
+                      subtext: 'Senior Thesis Done',
+                      colors: colors,
+                      color: colors.tertiary,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Divider(color: colors.outlineVariant),
+                const SizedBox(height: 4),
+                // Long-press version bar
+                GestureDetector(
+                  onLongPress: onLongPressVersion,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Cityzens v1.0.0+1 (Android SDK 36 • Impeller Safe) [Long Press for Recruiter Hub]',
+                      style: TextStyle(
+                        color: colors.onSurfaceVariant,
+                        fontSize: 9,
+                        fontFamily: 'monospace',
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIdStat({
+    required String label,
+    required String value,
+    required String subtext,
+    required ColorScheme colors,
+    required Color color,
+  }) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: TextStyle(color: colors.onSurfaceVariant, fontSize: 9),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.w800,
+            fontSize: 12,
+          ),
+        ),
+        Text(
+          subtext,
+          style: TextStyle(
+            color: colors.onSurfaceVariant,
+            fontSize: 8,
+          ),
+        ),
+      ],
+    );
+  }
+}

@@ -1,0 +1,704 @@
+import 'dart:convert';
+import 'package:path/path.dart' as p;
+import 'package:sqflite/sqflite.dart';
+
+class AppDatabase {
+  static const String _dbName = 'cityzens_campus.db';
+  static const int _dbVersion = 1;
+
+  Database? _db;
+
+  AppDatabase([Database? injectedDb]) : _db = injectedDb;
+
+  Database get db {
+    if (_db == null) {
+      throw StateError('Database has not been initialized. Call init() first.');
+    }
+    return _db!;
+  }
+
+  bool get isInitialized => _db != null;
+
+  Future<void> init() async {
+    if (_db != null) return;
+    final databasesPath = await getDatabasesPath();
+    final path = p.join(databasesPath, _dbName);
+
+    _db = await openDatabase(
+      path,
+      version: _dbVersion,
+      onCreate: (db, version) async {
+        await _createTables(db);
+        await _seedInitialData(db);
+      },
+    );
+  }
+
+  static Future<void> _createTables(Database db) async {
+    await db.execute('''
+      CREATE TABLE courses (
+        id TEXT PRIMARY KEY,
+        code TEXT NOT NULL,
+        title TEXT NOT NULL,
+        instructor TEXT NOT NULL,
+        room TEXT NOT NULL,
+        schedule TEXT NOT NULL,
+        present_count INTEGER NOT NULL DEFAULT 0,
+        absent_count INTEGER NOT NULL DEFAULT 0,
+        excused_count INTEGER NOT NULL DEFAULT 0,
+        total_classes INTEGER NOT NULL DEFAULT 0,
+        min_required_percentage REAL NOT NULL DEFAULT 75.0
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE attendance_ledger (
+        id TEXT PRIMARY KEY,
+        course_id TEXT NOT NULL,
+        course_code TEXT NOT NULL,
+        timestamp INTEGER NOT NULL,
+        status TEXT NOT NULL,
+        verification_method TEXT NOT NULL,
+        notes TEXT NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE library_books (
+        id TEXT PRIMARY KEY,
+        isbn TEXT NOT NULL UNIQUE,
+        title TEXT NOT NULL,
+        author TEXT NOT NULL,
+        category TEXT NOT NULL,
+        shelf_location TEXT NOT NULL,
+        total_copies INTEGER NOT NULL,
+        available_copies INTEGER NOT NULL,
+        is_reserved INTEGER NOT NULL DEFAULT 0,
+        abstract TEXT NOT NULL,
+        table_of_contents TEXT NOT NULL,
+        cover_asset TEXT NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE library_loans (
+        id TEXT PRIMARY KEY,
+        book_id TEXT NOT NULL,
+        borrower_id TEXT NOT NULL,
+        borrow_date INTEGER NOT NULL,
+        due_date INTEGER NOT NULL,
+        is_returned INTEGER NOT NULL DEFAULT 0,
+        renewal_count INTEGER NOT NULL DEFAULT 0,
+        overdue_fine REAL NOT NULL DEFAULT 0.0
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE campus_posts (
+        id TEXT PRIMARY KEY,
+        author_name TEXT NOT NULL,
+        author_role TEXT NOT NULL,
+        author_avatar TEXT NOT NULL,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        category TEXT NOT NULL,
+        timestamp INTEGER NOT NULL,
+        likes_count INTEGER NOT NULL DEFAULT 0,
+        is_liked INTEGER NOT NULL DEFAULT 0,
+        comments_count INTEGER NOT NULL DEFAULT 0,
+        is_bookmarked INTEGER NOT NULL DEFAULT 0
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE campus_comments (
+        id TEXT PRIMARY KEY,
+        post_id TEXT NOT NULL,
+        author_name TEXT NOT NULL,
+        author_role TEXT NOT NULL,
+        content TEXT NOT NULL,
+        timestamp INTEGER NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE leave_requests (
+        id TEXT PRIMARY KEY,
+        course_code TEXT NOT NULL,
+        reason TEXT NOT NULL,
+        date INTEGER NOT NULL,
+        status TEXT NOT NULL
+      )
+    ''');
+  }
+
+  static Future<void> _seedInitialData(Database db) async {
+    // 1. Seed Courses
+    final courses = [
+      {
+        'id': 'crs_01',
+        'code': 'CS-401',
+        'title': 'Distributed Systems & Cloud Computing',
+        'instructor': 'Dr. Aris Thorne',
+        'room': 'Alan Turing Hall 302',
+        'schedule': 'Mon & Wed 09:00 - 10:30',
+        'present_count': 22,
+        'absent_count': 2,
+        'excused_count': 1,
+        'total_classes': 25,
+        'min_required_percentage': 75.0,
+      },
+      {
+        'id': 'crs_02',
+        'code': 'CS-405',
+        'title': 'Advanced Mobile Architecture & Low-Level Kernels',
+        'instructor': 'Prof. Evelyn Vance',
+        'room': 'Grace Hopper Hall 101',
+        'schedule': 'Tue & Thu 11:00 - 12:30',
+        'present_count': 24,
+        'absent_count': 0,
+        'excused_count': 1,
+        'total_classes': 25,
+        'min_required_percentage': 75.0,
+      },
+      {
+        'id': 'crs_03',
+        'code': 'AI-410',
+        'title': 'Applied Artificial Intelligence & Neural Heuristics',
+        'instructor': 'Dr. Marcus Holloway',
+        'room': 'Shannon Computing Lab 204',
+        'schedule': 'Mon & Fri 14:00 - 15:30',
+        'present_count': 19,
+        'absent_count': 4,
+        'excused_count': 1,
+        'total_classes': 24,
+        'min_required_percentage': 75.0,
+      },
+      {
+        'id': 'crs_04',
+        'code': 'SE-420',
+        'title': 'Domain-Driven Enterprise Software Engineering',
+        'instructor': 'Prof. Claire Sterling',
+        'room': 'Lovelace Lecture Theater 401',
+        'schedule': 'Wed & Fri 16:00 - 17:30',
+        'present_count': 21,
+        'absent_count': 1,
+        'excused_count': 0,
+        'total_classes': 22,
+        'min_required_percentage': 75.0,
+      },
+      {
+        'id': 'crs_05',
+        'code': 'SEC-430',
+        'title': 'Zero-Trust Cryptographic Infrastructure',
+        'instructor': 'Dr. Nathan Drake',
+        'room': 'Knuth Security Center B12',
+        'schedule': 'Thu 14:00 - 17:00',
+        'present_count': 18,
+        'absent_count': 3,
+        'excused_count': 1,
+        'total_classes': 22,
+        'min_required_percentage': 75.0,
+      },
+    ];
+
+    for (final c in courses) {
+      await db.insert('courses', c);
+    }
+
+    // 2. Seed Attendance Records
+    final now = DateTime.now();
+    final ledgerItems = [
+      {
+        'id': 'att_01',
+        'course_id': 'crs_01',
+        'course_code': 'CS-401',
+        'timestamp': now.subtract(const Duration(days: 1)).millisecondsSinceEpoch,
+        'status': 'present',
+        'verification_method': 'native_qr',
+        'notes': 'Verified optical QR token scan at Turing Hall entrance.',
+      },
+      {
+        'id': 'att_02',
+        'course_id': 'crs_02',
+        'course_code': 'CS-405',
+        'timestamp': now.subtract(const Duration(days: 2)).millisecondsSinceEpoch,
+        'status': 'present',
+        'verification_method': 'native_qr',
+        'notes': 'Verified optical QR token scan at Hopper Auditorium.',
+      },
+      {
+        'id': 'att_03',
+        'course_id': 'crs_03',
+        'course_code': 'AI-410',
+        'timestamp': now.subtract(const Duration(days: 3)).millisecondsSinceEpoch,
+        'status': 'absent',
+        'verification_method': 'unverified',
+        'notes': 'Missed lecture - AI laboratory session.',
+      },
+      {
+        'id': 'att_04',
+        'course_id': 'crs_04',
+        'course_code': 'SE-420',
+        'timestamp': now.subtract(const Duration(days: 5)).millisecondsSinceEpoch,
+        'status': 'present',
+        'verification_method': 'manual_pin',
+        'notes': 'Faculty override PIN validation (Pin: 892014).',
+      },
+      {
+        'id': 'att_05',
+        'course_id': 'crs_05',
+        'course_code': 'SEC-430',
+        'timestamp': now.subtract(const Duration(days: 7)).millisecondsSinceEpoch,
+        'status': 'excused',
+        'verification_method': 'leave_request',
+        'notes': 'Dean sanctioned medical leave request #LR-9921.',
+      },
+    ];
+
+    for (final item in ledgerItems) {
+      await db.insert('attendance_ledger', item);
+    }
+
+    // 3. Seed 42 Comprehensive Books
+    final books = _generate42Books();
+    for (final b in books) {
+      await db.insert('library_books', b);
+    }
+
+    // 4. Seed Initial Active Loans (3 loans: 2 healthy, 1 due soon/overdue)
+    final loans = [
+      {
+        'id': 'loan_01',
+        'book_id': 'book_01',
+        'borrower_id': 'CTZ-2026-8842',
+        'borrow_date': now.subtract(const Duration(days: 10)).millisecondsSinceEpoch,
+        'due_date': now.add(const Duration(days: 4)).millisecondsSinceEpoch,
+        'is_returned': 0,
+        'renewal_count': 0,
+        'overdue_fine': 0.0,
+      },
+      {
+        'id': 'loan_02',
+        'book_id': 'book_02',
+        'borrower_id': 'CTZ-2026-8842',
+        'borrow_date': now.subtract(const Duration(days: 18)).millisecondsSinceEpoch,
+        'due_date': now.subtract(const Duration(days: 2)).millisecondsSinceEpoch,
+        'is_returned': 0,
+        'renewal_count': 1,
+        'overdue_fine': 1.0, // 2 days * $0.50
+      },
+      {
+        'id': 'loan_03',
+        'book_id': 'book_03',
+        'borrower_id': 'CTZ-2026-8842',
+        'borrow_date': now.subtract(const Duration(days: 6)).millisecondsSinceEpoch,
+        'due_date': now.add(const Duration(days: 8)).millisecondsSinceEpoch,
+        'is_returned': 0,
+        'renewal_count': 0,
+        'overdue_fine': 0.0,
+      },
+    ];
+
+    for (final l in loans) {
+      await db.insert('library_loans', l);
+    }
+
+    // 5. Seed Campus Community Posts & Comments
+    final posts = [
+      {
+        'id': 'post_01',
+        'author_name': 'Dr. Aris Thorne',
+        'author_role': 'Dean of Distributed Systems Research',
+        'author_avatar': 'AT',
+        'title': 'Distributed Consensus Workshop: Raft vs Paxos in Production',
+        'content': 'We are hosting a high-throughput systems workshop this Thursday at 14:00 in Alan Turing Hall 302. Bring your laptops configured with Go and Docker. All registered seniors are welcome.',
+        'category': 'Faculty Announcement',
+        'timestamp': now.subtract(const Duration(hours: 3)).millisecondsSinceEpoch,
+        'likes_count': 42,
+        'is_liked': 1,
+        'comments_count': 3,
+        'is_bookmarked': 1,
+      },
+      {
+        'id': 'post_02',
+        'author_name': 'Prof. Evelyn Vance',
+        'author_role': 'Head of Mobile Architectures Lab',
+        'author_avatar': 'EV',
+        'title': 'Undergraduate Research Assistantship: Next-Gen Native Runtimes',
+        'content': 'Our lab has two funded openings for research assistants specializing in Dart compiler internals, Skia/Impeller rendering pipeline optimizations, and zero-cost native bridges. Submit portfolios via the departmental portal.',
+        'category': 'Research Group',
+        'timestamp': now.subtract(const Duration(hours: 9)).millisecondsSinceEpoch,
+        'likes_count': 67,
+        'is_liked': 0,
+        'comments_count': 2,
+        'is_bookmarked': 0,
+      },
+      {
+        'id': 'post_03',
+        'author_name': 'Safeer Hussain',
+        'author_role': 'Senior Mobile Architect / CS Honours',
+        'author_avatar': 'SH',
+        'title': 'Offline-First Smart Campus Architecture Whitepaper Released',
+        'content': 'Published comprehensive architecture blueprints demonstrating a 15.4% boost in screen load times and 25.1% UI frame render boost using local SQLite caching, MethodChannel optical sensors, and reactive MVVM providers. Benchmarks verified on Android SDK 36.',
+        'category': 'Campus Event',
+        'timestamp': now.subtract(const Duration(days: 1)).millisecondsSinceEpoch,
+        'likes_count': 114,
+        'is_liked': 1,
+        'comments_count': 4,
+        'is_bookmarked': 1,
+      },
+      {
+        'id': 'post_04',
+        'author_name': 'Library Services Directorate',
+        'author_role': 'University Library Administration',
+        'author_avatar': 'LB',
+        'title': '24/7 Silent Study Wing & Digital Repository Upgrade Completed',
+        'content': 'Floor 3 and the Turing Reference Hall are now open 24/7 with RFID optical self-checkout kiosks. Over 40 new reference volumes on AI Agents and Cloud Native Security have been cataloged.',
+        'category': 'Lab Access',
+        'timestamp': now.subtract(const Duration(days: 2)).millisecondsSinceEpoch,
+        'likes_count': 58,
+        'is_liked': 0,
+        'comments_count': 1,
+        'is_bookmarked': 0,
+      },
+    ];
+
+    for (final p in posts) {
+      await db.insert('campus_posts', p);
+    }
+
+    final comments = [
+      {
+        'id': 'comm_01',
+        'post_id': 'post_01',
+        'author_name': 'Safeer Hussain',
+        'author_role': 'Senior Student / Architect',
+        'content': 'Looking forward to the Raft state machine partition benchmarks.',
+        'timestamp': now.subtract(const Duration(hours: 2)).millisecondsSinceEpoch,
+      },
+      {
+        'id': 'comm_02',
+        'post_id': 'post_01',
+        'author_name': 'Maya Lin',
+        'author_role': 'Graduate Researcher',
+        'content': 'Will the cluster nodes be deployed across local Raspberry Pi clusters or AWS nodes?',
+        'timestamp': now.subtract(const Duration(hours: 1)).millisecondsSinceEpoch,
+      },
+      {
+        'id': 'comm_03',
+        'post_id': 'post_03',
+        'author_name': 'Dr. Aris Thorne',
+        'author_role': 'Faculty',
+        'content': 'Exceptional benchmarking methodology, Safeer. The memory footprint stays under 60MB.',
+        'timestamp': now.subtract(const Duration(hours: 18)).millisecondsSinceEpoch,
+      },
+    ];
+
+    for (final c in comments) {
+      await db.insert('campus_comments', c);
+    }
+  }
+
+  static List<Map<String, dynamic>> _generate42Books() {
+    final List<Map<String, dynamic>> books = [
+      {
+        'id': 'book_01',
+        'isbn': '978-0134494166',
+        'title': "Clean Architecture: A Craftsman's Guide to Software Structure",
+        'author': 'Robert C. Martin',
+        'category': 'Software Engineering',
+        'shelf_location': 'FLOOR-2 / AISLE-A / BAY-01',
+        'total_copies': 6,
+        'available_copies': 4,
+        'is_reserved': 0,
+        'abstract': 'Building upon the universal rules of software architecture, Uncle Bob explains how to develop architectures that keep software resilient to technological churn and easy to maintain.',
+        'table_of_contents': jsonEncode([
+          'Chapter 1: What is Design and Architecture?',
+          'Chapter 2: A Tale of Two Values',
+          'Chapter 3: Paradigm Overview',
+          'Chapter 4: Structured Programming',
+          'Chapter 5: Object-Oriented Programming',
+          'Chapter 6: Functional Programming',
+          'Chapter 7: Single Responsibility Principle',
+          'Chapter 8: Open-Closed Principle',
+          'Chapter 9: Liskov Substitution Principle',
+          'Chapter 10: Interface Segregation Principle',
+        ]),
+        'cover_asset': 'assets/images/book_clean_architecture.png',
+      },
+      {
+        'id': 'book_02',
+        'isbn': '978-0132350884',
+        'title': 'Clean Code: A Handbook of Agile Software Craftsmanship',
+        'author': 'Robert C. Martin',
+        'category': 'Software Engineering',
+        'shelf_location': 'FLOOR-2 / AISLE-A / BAY-02',
+        'total_copies': 5,
+        'available_copies': 2,
+        'is_reserved': 1,
+        'abstract': 'Even bad code can function. But if code isn’t clean, it can bring a development organization to its knees. Every year, countless hours and significant resources are lost because of poorly written code.',
+        'table_of_contents': jsonEncode([
+          'Chapter 1: Clean Code',
+          'Chapter 2: Meaningful Names',
+          'Chapter 3: Functions',
+          'Chapter 4: Comments',
+          'Chapter 5: Formatting',
+          'Chapter 6: Objects and Data Structures',
+          'Chapter 7: Error Handling',
+          'Chapter 8: Boundaries',
+        ]),
+        'cover_asset': 'assets/images/book_clean_architecture.png',
+      },
+      {
+        'id': 'book_03',
+        'isbn': '978-1491950357',
+        'title': 'Designing Data-Intensive Applications',
+        'author': 'Martin Kleppmann',
+        'category': 'Cloud & Security',
+        'shelf_location': 'FLOOR-3 / AISLE-B / BAY-04',
+        'total_copies': 8,
+        'available_copies': 3,
+        'is_reserved': 0,
+        'abstract': 'Data is at the center of many challenges in system design today. Difficult issues need to be figured out, such as scalability, consistency, reliability, efficiency, and maintainability.',
+        'table_of_contents': jsonEncode([
+          'Part I: Foundations of Data Systems',
+          'Part II: Distributed Data',
+          'Part III: Derived Data',
+          'Chapter 5: Replication',
+          'Chapter 6: Partitioning',
+          'Chapter 7: Transactions',
+          'Chapter 8: The Trouble with Distributed Systems',
+          'Chapter 9: Consistency and Consensus',
+        ]),
+        'cover_asset': 'assets/images/book_distributed_databases.png',
+      },
+      {
+        'id': 'book_04',
+        'isbn': '978-0262033848',
+        'title': 'Introduction to Algorithms (CLRS 4th Edition)',
+        'author': 'Thomas H. Cormen, Charles E. Leiserson',
+        'category': 'Software Engineering',
+        'shelf_location': 'FLOOR-1 / AISLE-C / BAY-08',
+        'total_copies': 12,
+        'available_copies': 7,
+        'is_reserved': 0,
+        'abstract': 'A comprehensive textbook covering the complete spectrum of modern algorithms, from sorting and data structures to dynamic programming, graph algorithms, and NP-completeness.',
+        'table_of_contents': jsonEncode([
+          'Section I: Foundations',
+          'Section II: Sorting and Order Statistics',
+          'Section III: Data Structures',
+          'Section IV: Advanced Design and Analysis Techniques',
+          'Section V: Advanced Data Structures',
+          'Section VI: Graph Algorithms',
+          'Section VII: Selected Topics',
+        ]),
+        'cover_asset': 'assets/images/book_clean_architecture.png',
+      },
+      {
+        'id': 'book_05',
+        'isbn': '978-0262035613',
+        'title': 'Deep Learning: Adaptive Computation and Machine Learning',
+        'author': 'Ian Goodfellow, Yoshua Bengio, Aaron Courville',
+        'category': 'AI & ML',
+        'shelf_location': 'FLOOR-3 / AISLE-D / BAY-12',
+        'total_copies': 7,
+        'available_copies': 5,
+        'is_reserved': 0,
+        'abstract': 'The deep learning textbook written by pioneering researchers, covering linear algebra, probability, numerical computation, deep feedforward networks, regularization, and generative models.',
+        'table_of_contents': jsonEncode([
+          'Part I: Applied Math and Machine Learning Basics',
+          'Part II: Deep Networks: Modern Practices',
+          'Part III: Deep Learning Research',
+          'Chapter 6: Deep Feedforward Networks',
+          'Chapter 7: Regularization for Deep Learning',
+          'Chapter 8: Optimization for Training Deep Models',
+        ]),
+        'cover_asset': 'assets/images/book_applied_ai.png',
+      },
+      {
+        'id': 'book_06',
+        'isbn': '978-0131103627',
+        'title': 'The C Programming Language (2nd Edition)',
+        'author': 'Brian W. Kernighan, Dennis M. Ritchie',
+        'category': 'Systems & Architecture',
+        'shelf_location': 'FLOOR-1 / AISLE-A / BAY-03',
+        'total_copies': 10,
+        'available_copies': 6,
+        'is_reserved': 0,
+        'abstract': 'The definitive reference guide to C programming authored by the creators of C and Unix. Essential reading for low-level systems engineers.',
+        'table_of_contents': jsonEncode([
+          'Chapter 1: A Tutorial Introduction',
+          'Chapter 2: Types, Operators, and Expressions',
+          'Chapter 3: Control Flow',
+          'Chapter 4: Functions and Program Structure',
+          'Chapter 5: Pointers and Arrays',
+          'Chapter 6: Structures',
+          'Chapter 7: Input and Output',
+        ]),
+        'cover_asset': 'assets/images/book_mobile_systems.png',
+      },
+      {
+        'id': 'book_07',
+        'isbn': '978-1449373320',
+        'title': 'Designing Distributed Systems: Patterns and Paradigms',
+        'author': 'Brendan Burns',
+        'category': 'Cloud & Security',
+        'shelf_location': 'FLOOR-3 / AISLE-C / BAY-09',
+        'total_copies': 6,
+        'available_copies': 4,
+        'is_reserved': 0,
+        'abstract': 'Brendan Burns, co-founder of Kubernetes, explains how you can adapt and apply repeatable, generic design patterns for building scalable and reliable distributed applications.',
+        'table_of_contents': jsonEncode([
+          'Chapter 1: Introduction to Distributed Systems',
+          'Chapter 2: Sidecar Pattern',
+          'Chapter 3: Ambassador Pattern',
+          'Chapter 4: Adapter Pattern',
+          'Chapter 5: Replicated Load-Balanced Services',
+        ]),
+        'cover_asset': 'assets/images/book_distributed_databases.png',
+      },
+      {
+        'id': 'book_08',
+        'isbn': '978-0134685991',
+        'title': 'Effective Java (3rd Edition)',
+        'author': 'Joshua Bloch',
+        'category': 'Software Engineering',
+        'shelf_location': 'FLOOR-2 / AISLE-A / BAY-05',
+        'total_copies': 8,
+        'available_copies': 5,
+        'is_reserved': 0,
+        'abstract': 'The definitive best-practices guide covering 90 concise rules for writing robust, readable, and maintainable object-oriented software.',
+        'table_of_contents': jsonEncode([
+          'Chapter 2: Creating and Destroying Objects',
+          'Chapter 3: Methods Common to All Objects',
+          'Chapter 4: Classes and Interfaces',
+          'Chapter 5: Generics',
+          'Chapter 6: Enums and Annotations',
+          'Chapter 7: Lambdas and Streams',
+        ]),
+        'cover_asset': 'assets/images/book_clean_architecture.png',
+      },
+      {
+        'id': 'book_09',
+        'isbn': '978-0132354790',
+        'title': 'Database Internals: A Deep Dive into Distributed Engines',
+        'author': 'Alex Petrov',
+        'category': 'Systems & Architecture',
+        'shelf_location': 'FLOOR-3 / AISLE-B / BAY-11',
+        'total_copies': 5,
+        'available_copies': 2,
+        'is_reserved': 0,
+        'abstract': 'When it comes to choosing, using, and maintaining a database, understanding its internal machinery is paramount. Explores B-Trees, LSM-Trees, and Distributed Consensus.',
+        'table_of_contents': jsonEncode([
+          'Part I: Storage Engines',
+          'Chapter 1: Storage Engine Overview',
+          'Chapter 2: B-Tree Basics',
+          'Chapter 3: File Formats and Compaction',
+          'Part II: Distributed Systems and Consensus',
+        ]),
+        'cover_asset': 'assets/images/book_distributed_databases.png',
+      },
+      {
+        'id': 'book_10',
+        'isbn': '978-1492040767',
+        'title': 'Flutter in Action: Native Cross-Platform Engineering',
+        'author': 'Eric Windmill',
+        'category': 'Systems & Architecture',
+        'shelf_location': 'FLOOR-2 / AISLE-C / BAY-15',
+        'total_copies': 9,
+        'available_copies': 4,
+        'is_reserved': 0,
+        'abstract': 'Teaches you to build beautiful, responsive native mobile applications using Flutter and Dart. Covers the widget tree, state management, render objects, and native platform channels.',
+        'table_of_contents': jsonEncode([
+          'Chapter 1: Meet Flutter',
+          'Chapter 2: Dart Foundations',
+          'Chapter 3: The Widget Tree Architecture',
+          'Chapter 4: State Management Patterns',
+          'Chapter 5: Platform Channels and Native Bridging',
+        ]),
+        'cover_asset': 'assets/images/book_mobile_systems.png',
+      },
+    ];
+
+    // Seed remaining 32 books programmatically to ensure 42 total books
+    final categories = [
+      'Software Engineering',
+      'AI & ML',
+      'Cloud & Security',
+      'Systems & Architecture',
+    ];
+
+    final sampleTitles = [
+      'Site Reliability Engineering: How Google Runs Production Systems',
+      'Reinforcement Learning: An Introduction (2nd Edition)',
+      'Artificial Intelligence: A Modern Approach (4th Edition)',
+      'Computer Networking: A Top-Down Approach',
+      'Operating Systems: Three Easy Pieces',
+      'Computer Architecture: A Quantitative Approach',
+      'Structure and Interpretation of Computer Programs',
+      'Programming Rust: Fast, Safe Systems Development',
+      'Refactoring: Improving the Design of Existing Code',
+      'Domain-Driven Design: Tackling Complexity in Software',
+      'Microservices Patterns: With Examples in Java',
+      'Building Microservices: Designing Fine-Grained Systems',
+      'Continuous Delivery: Reliable Software Releases',
+      'The Linux Programming Interface: A Linux and UNIX System Programming Handbook',
+      'Modern Operating Systems (4th Edition)',
+      'Introduction to Information Retrieval',
+      'Speech and Language Processing (3rd Draft Edition)',
+      'Generative Deep Learning: Teaching Machines to Paint, Write, Compose',
+      'Kubernetes Up and Running: Dive into Future of Infrastructure',
+      'The Phoenix Project: A Novel about IT, DevOps, and Helping Your Business Win',
+      'The Pragmatic Programmer: Your Journey To Mastery',
+      'Working Effectively with Legacy Code',
+      'Patterns of Enterprise Application Architecture',
+      'Test Driven Development: By Example',
+      'Release It!: Design and Deploy Production-Ready Software',
+      'Practical Object-Oriented Design in Ruby',
+      'Head First Design Patterns: Building Extensible Software',
+      'Cracking the Coding Interview: 189 Programming Questions',
+      'Enterprise Integration Patterns: Designing, Building, and Deploying Messaging',
+      'Zero Trust Networks: Building Secure Systems in Untrusted Networks',
+      'Cryptography Engineering: Design Principles and Practical Applications',
+      'Concurrency in Go: Tools and Techniques for Developers',
+    ];
+
+    for (int i = 0; i < sampleTitles.length; i++) {
+      final index = 11 + i;
+      final category = categories[i % categories.length];
+      final title = sampleTitles[i];
+      final isbn = '978-0${100000000 + index}';
+      final copies = 3 + (i % 6);
+      final avail = (copies > 4) ? copies - 2 : copies - 1;
+
+      books.add({
+        'id': 'book_$index',
+        'isbn': isbn,
+        'title': title,
+        'author': 'Academic Fellow & Research Faculty',
+        'category': category,
+        'shelf_location': 'FLOOR-${(i % 3) + 1} / AISLE-${String.fromCharCode(65 + (i % 5))} / BAY-${(i % 12) + 1}',
+        'total_copies': copies,
+        'available_copies': avail,
+        'is_reserved': (i % 7 == 0) ? 1 : 0,
+        'abstract': 'A peer-reviewed academic resource exploring $title with state-of-the-art methodology, benchmark analysis, and rigorous computational verification.',
+        'table_of_contents': jsonEncode([
+          'Chapter 1: Foundational Principles & Problem Formulation',
+          'Chapter 2: Architectural Taxonomy & Core Abstractions',
+          'Chapter 3: Empirical Benchmarking & Systemic Verification',
+          'Chapter 4: Scalability Bounds & Future Trajectories',
+        ]),
+        'cover_asset': category == 'AI & ML'
+            ? 'assets/images/book_applied_ai.png'
+            : category == 'Cloud & Security'
+                ? 'assets/images/book_distributed_databases.png'
+                : category == 'Systems & Architecture'
+                    ? 'assets/images/book_mobile_systems.png'
+                    : 'assets/images/book_clean_architecture.png',
+      });
+    }
+
+    return books;
+  }
+}
