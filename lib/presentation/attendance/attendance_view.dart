@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/utils/app_feedback.dart';
 import '../../data/models/course_attendance.dart';
+import '../exam/exam_hall_pass_view.dart';
 import 'attendance_provider.dart';
 import 'widgets/attendance_trend_chart.dart';
 
@@ -62,6 +63,52 @@ class AttendanceView extends StatelessWidget {
           _buildAnalyticsCard(context, provider, colors),
           const SizedBox(height: 14),
           _buildTrendCard(context, provider, colors),
+          const SizedBox(height: 12),
+          InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ExamHallPassView()),
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: colors.surfaceContainer,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: colors.outlineVariant),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.event_seat_rounded, color: colors.secondary, size: 20),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Midterm & Final Exam Hall Passes',
+                          style: TextStyle(
+                            color: colors.onSurface,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 12,
+                          ),
+                        ),
+                        Text(
+                          'Digital admission slips, cryptographic seals & desk matrix',
+                          style: TextStyle(
+                            color: colors.onSurfaceVariant,
+                            fontSize: 10,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.arrow_forward_ios_rounded, size: 12, color: colors.onSurfaceVariant),
+                ],
+              ),
+            ),
+          ),
           const SizedBox(height: 14),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

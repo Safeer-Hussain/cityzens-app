@@ -9,7 +9,7 @@ This backlog defines 25 granular, production-ready engineering sprints. Promptin
   - Recalculates projected graduation honors and stores historical grade transcripts in SQLite.
   - Comprehensive unit tests verifying GPA calculation formulas.
 
-- [ ] **Sprint 02: Exam Hall Seat Finder & Digital Admission Slip**
+- [x] **Sprint 02: Exam Hall Seat Finder & Digital Admission Slip**
   - Optical examination hall pass generator with cryptographic checksum.
   - Visual seat assignment matrix for Turing Hall and Hopper Auditorium.
   - Offline timetable reminder notification triggers.

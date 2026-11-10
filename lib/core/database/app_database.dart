@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
+import '../utils/exam_cryptography.dart';
 
 class AppDatabase {
   static const String _dbName = 'cityzens_campus.db';
@@ -42,11 +43,42 @@ class AppDatabase {
       )
     ''');
 
+    await _db!.execute('''
+      CREATE TABLE IF NOT EXISTS exam_hall_passes (
+        id TEXT PRIMARY KEY,
+        student_id TEXT NOT NULL,
+        student_name TEXT NOT NULL,
+        course_code TEXT NOT NULL,
+        course_title TEXT NOT NULL,
+        exam_type TEXT NOT NULL,
+        exam_date INTEGER NOT NULL,
+        duration_minutes INTEGER NOT NULL,
+        hall_name TEXT NOT NULL,
+        seat_row TEXT NOT NULL,
+        seat_number INTEGER NOT NULL,
+        desk_number TEXT NOT NULL,
+        optical_token TEXT NOT NULL,
+        cryptographic_checksum TEXT NOT NULL,
+        is_verified INTEGER NOT NULL DEFAULT 0,
+        is_reminder_set INTEGER NOT NULL DEFAULT 0,
+        reminder_lead_minutes INTEGER NOT NULL DEFAULT 60,
+        invigilator_name TEXT NOT NULL,
+        instructions TEXT NOT NULL
+      )
+    ''');
+
     final transcriptCount = Sqflite.firstIntValue(
       await _db!.rawQuery('SELECT COUNT(*) FROM academic_transcripts'),
     ) ?? 0;
     if (transcriptCount == 0) {
       await _seedTranscripts(_db!);
+    }
+
+    final passCount = Sqflite.firstIntValue(
+      await _db!.rawQuery('SELECT COUNT(*) FROM exam_hall_passes'),
+    ) ?? 0;
+    if (passCount == 0) {
+      await _seedExamPasses(_db!);
     }
   }
 
@@ -153,6 +185,30 @@ class AppDatabase {
         semester_name TEXT NOT NULL,
         credit_hours INTEGER NOT NULL,
         gpa REAL NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE exam_hall_passes (
+        id TEXT PRIMARY KEY,
+        student_id TEXT NOT NULL,
+        student_name TEXT NOT NULL,
+        course_code TEXT NOT NULL,
+        course_title TEXT NOT NULL,
+        exam_type TEXT NOT NULL,
+        exam_date INTEGER NOT NULL,
+        duration_minutes INTEGER NOT NULL,
+        hall_name TEXT NOT NULL,
+        seat_row TEXT NOT NULL,
+        seat_number INTEGER NOT NULL,
+        desk_number TEXT NOT NULL,
+        optical_token TEXT NOT NULL,
+        cryptographic_checksum TEXT NOT NULL,
+        is_verified INTEGER NOT NULL DEFAULT 0,
+        is_reminder_set INTEGER NOT NULL DEFAULT 0,
+        reminder_lead_minutes INTEGER NOT NULL DEFAULT 60,
+        invigilator_name TEXT NOT NULL,
+        instructions TEXT NOT NULL
       )
     ''');
   }
@@ -744,5 +800,130 @@ class AppDatabase {
     }
 
     return books;
+  }
+
+  static Future<void> _seedExamPasses(Database db) async {
+    const studentId = 'CTZ-2024-8842';
+    const studentName = 'Safeer Hussain';
+
+    final passes = [
+      {
+        'id': 'exam_pass_001',
+        'student_id': studentId,
+        'student_name': studentName,
+        'course_code': 'CS-401',
+        'course_title': 'Advanced Distributed Systems',
+        'exam_type': 'Final Comprehensive Examination',
+        'exam_date': DateTime(2026, 11, 18, 9, 0).millisecondsSinceEpoch,
+        'duration_minutes': 180,
+        'hall_name': 'Turing Hall',
+        'seat_row': 'C',
+        'seat_number': 14,
+        'desk_number': 'TH-C14',
+        'is_verified': 1,
+        'is_reminder_set': 1,
+        'reminder_lead_minutes': 60,
+        'invigilator_name': 'Dr. Alan Vance',
+        'instructions': jsonEncode([
+          'Candidate must present official physical student ID card along with optical admission pass.',
+          'No programmable calculators, cellular devices, or wearable electronics allowed at candidate desk.',
+          'Candidates must occupy assigned desk TH-C14 at least 15 minutes before exam commencement.',
+        ]),
+      },
+      {
+        'id': 'exam_pass_002',
+        'student_id': studentId,
+        'student_name': studentName,
+        'course_code': 'CS-420',
+        'course_title': 'Applied Machine Learning & Neural Systems',
+        'exam_type': 'Midterm Laboratory Evaluation',
+        'exam_date': DateTime(2026, 11, 20, 14, 0).millisecondsSinceEpoch,
+        'duration_minutes': 120,
+        'hall_name': 'Hopper Auditorium',
+        'seat_row': 'E',
+        'seat_number': 8,
+        'desk_number': 'HA-E08',
+        'is_verified': 0,
+        'is_reminder_set': 0,
+        'reminder_lead_minutes': 60,
+        'invigilator_name': 'Prof. Margaret Hamilton',
+        'instructions': jsonEncode([
+          'Laboratory terminals are pre-configured in strict sandboxed mode with zero internet routing.',
+          'All model checkpoints and code solutions must be committed to the offline university repository before time expires.',
+          'Maintain complete silence and raise hand for proctor assistance.',
+        ]),
+      },
+      {
+        'id': 'exam_pass_003',
+        'student_id': studentId,
+        'student_name': studentName,
+        'course_code': 'SE-450',
+        'course_title': 'Autonomous Mobile Architectures',
+        'exam_type': 'Final Theory Examination',
+        'exam_date': DateTime(2026, 11, 23, 9, 0).millisecondsSinceEpoch,
+        'duration_minutes': 180,
+        'hall_name': 'Turing Hall',
+        'seat_row': 'B',
+        'seat_number': 6,
+        'desk_number': 'TH-B06',
+        'is_verified': 1,
+        'is_reminder_set': 1,
+        'reminder_lead_minutes': 120,
+        'invigilator_name': 'Dr. Barbara Liskov',
+        'instructions': jsonEncode([
+          'Closed-book examination covering concurrency models, state isolation, and native platform channels.',
+          'Clear plastic pencil cases only; unauthorized paper notes will result in immediate disqualification.',
+          'Exit from examination hall permitted only after first 60 minutes of session.',
+        ]),
+      },
+      {
+        'id': 'exam_pass_004',
+        'student_id': studentId,
+        'student_name': studentName,
+        'course_code': 'CS-490',
+        'course_title': 'Senior Capstone Defense & Cloud Systems',
+        'exam_type': 'Oral Defense & System Validation',
+        'exam_date': DateTime(2026, 11, 26, 11, 30).millisecondsSinceEpoch,
+        'duration_minutes': 90,
+        'hall_name': 'Hopper Auditorium',
+        'seat_row': 'A',
+        'seat_number': 4,
+        'desk_number': 'HA-A04',
+        'is_verified': 0,
+        'is_reminder_set': 0,
+        'reminder_lead_minutes': 60,
+        'invigilator_name': 'Prof. Donald Knuth',
+        'instructions': jsonEncode([
+          'Presentation slides and architectural proof-of-concept system demonstration to evaluation jury.',
+          'Q&A defense session follows immediately after the 30-minute system walkthrough.',
+          'Formal academic dress code required for all graduating senior candidates.',
+        ]),
+      },
+    ];
+
+    for (final pass in passes) {
+      final checksum = ExamCryptography.generateChecksum(
+        passId: pass['id'] as String,
+        studentId: pass['student_id'] as String,
+        courseCode: pass['course_code'] as String,
+        hallName: pass['hall_name'] as String,
+        deskNumber: pass['desk_number'] as String,
+        examTimestamp: pass['exam_date'] as int,
+      );
+
+      final opticalToken = ExamCryptography.generateOpticalPayload(
+        passId: pass['id'] as String,
+        studentId: pass['student_id'] as String,
+        courseCode: pass['course_code'] as String,
+        deskNumber: pass['desk_number'] as String,
+        checksum: checksum,
+      );
+
+      await db.insert('exam_hall_passes', {
+        ...pass,
+        'optical_token': opticalToken,
+        'cryptographic_checksum': checksum,
+      });
+    }
   }
 }

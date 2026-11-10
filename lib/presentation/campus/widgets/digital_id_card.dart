@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../gpa_calculator/gpa_calculator_view.dart';
+import '../../exam/exam_hall_pass_view.dart';
 
 class DigitalIdCard extends StatelessWidget {
   final VoidCallback? onLongPressVersion;
@@ -202,6 +203,39 @@ class DigitalIdCard extends StatelessWidget {
                           'Open Semester GPA & Honors Simulator',
                           style: TextStyle(
                             color: colors.primary,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                // Exam Hall Pass & Seat Finder Shortcut Action
+                InkWell(
+                  borderRadius: BorderRadius.circular(8),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const ExamHallPassView()),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: colors.secondary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: colors.secondary.withValues(alpha: 0.3)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.badge_outlined, size: 14, color: colors.secondary),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Exam Hall Pass & Seat Finder',
+                          style: TextStyle(
+                            color: colors.secondary,
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                           ),
