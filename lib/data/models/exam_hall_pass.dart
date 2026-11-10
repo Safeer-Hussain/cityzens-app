@@ -1,12 +1,8 @@
 import 'dart:convert';
+
 import '../../core/utils/exam_cryptography.dart';
 
-enum SeatStatus {
-  assignedToUser,
-  occupied,
-  available,
-  accessible,
-}
+enum SeatStatus { assignedToUser, occupied, available, accessible }
 
 class ExamSeat {
   final String row;
@@ -182,7 +178,8 @@ class ExamHallPassModel {
       seatNumber: seatNumber ?? this.seatNumber,
       deskNumber: deskNumber ?? this.deskNumber,
       opticalToken: opticalToken ?? this.opticalToken,
-      cryptographicChecksum: cryptographicChecksum ?? this.cryptographicChecksum,
+      cryptographicChecksum:
+          cryptographicChecksum ?? this.cryptographicChecksum,
       isVerified: isVerified ?? this.isVerified,
       isReminderSet: isReminderSet ?? this.isReminderSet,
       reminderLeadMinutes: reminderLeadMinutes ?? this.reminderLeadMinutes,

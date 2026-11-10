@@ -1,12 +1,9 @@
 import 'package:flutter/foundation.dart';
+
 import '../../data/models/optical_payload.dart';
 import '../../data/repositories/scanner_repository.dart';
 
-enum ScannerMode {
-  attendanceQr,
-  libraryIsbn,
-  studentId,
-}
+enum ScannerMode { attendanceQr, libraryIsbn, studentId }
 
 extension ScannerModeExtension on ScannerMode {
   String get label {
@@ -87,7 +84,9 @@ class ScannerProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final payload = await repository.scanOpticalPayload(mode: _selectedMode.apiParam);
+      final payload = await repository.scanOpticalPayload(
+        mode: _selectedMode.apiParam,
+      );
       _lastPayload = payload;
       return payload;
     } catch (e) {

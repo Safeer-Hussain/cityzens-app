@@ -1,4 +1,5 @@
 import 'package:sqflite/sqflite.dart';
+
 import '../../core/database/app_database.dart';
 import '../models/course_attendance.dart';
 import '../models/attendance_record.dart';
@@ -16,12 +17,19 @@ class AttendanceRepository {
   }
 
   Future<List<AttendanceRecord>> getLedger() async {
-    final results = await _db.query('attendance_ledger', orderBy: 'timestamp DESC');
+    final results = await _db.query(
+      'attendance_ledger',
+      orderBy: 'timestamp DESC',
+    );
     return results.map((m) => AttendanceRecord.fromMap(m)).toList();
   }
 
   Future<CourseModel?> getCourseByCode(String code) async {
-    final results = await _db.query('courses', where: 'code = ?', whereArgs: [code]);
+    final results = await _db.query(
+      'courses',
+      where: 'code = ?',
+      whereArgs: [code],
+    );
     if (results.isEmpty) return null;
     return CourseModel.fromMap(results.first);
   }

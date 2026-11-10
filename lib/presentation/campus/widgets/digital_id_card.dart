@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../gpa_calculator/gpa_calculator_view.dart';
 import '../../exam/exam_hall_pass_view.dart';
 
@@ -41,7 +42,11 @@ class DigitalIdCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.shield_outlined, color: colors.onPrimary, size: 16),
+                    Icon(
+                      Icons.shield_outlined,
+                      color: colors.onPrimary,
+                      size: 16,
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       'CITYZENS SMART CAMPUS ID',
@@ -108,7 +113,11 @@ class DigitalIdCard extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(width: 6),
-                              Icon(Icons.verified_rounded, size: 16, color: colors.secondary),
+                              Icon(
+                                Icons.verified_rounded,
+                                size: 16,
+                                color: colors.secondary,
+                              ),
                             ],
                           ),
                           const SizedBox(height: 2),
@@ -146,11 +155,16 @@ class DigitalIdCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
                         Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const GpaCalculatorView()),
+                          MaterialPageRoute(
+                            builder: (_) => const GpaCalculatorView(),
+                          ),
                         );
                       },
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                          vertical: 2,
+                        ),
                         child: _buildIdStat(
                           label: 'Cumulative CGPA',
                           value: '3.94 / 4.00',
@@ -160,7 +174,11 @@ class DigitalIdCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Container(width: 1, height: 32, color: colors.outlineVariant),
+                    Container(
+                      width: 1,
+                      height: 32,
+                      color: colors.outlineVariant,
+                    ),
                     _buildIdStat(
                       label: 'Security Tier',
                       value: 'Tier 1 Clearance',
@@ -168,7 +186,11 @@ class DigitalIdCard extends StatelessWidget {
                       colors: colors,
                       color: colors.primary,
                     ),
-                    Container(width: 1, height: 32, color: colors.outlineVariant),
+                    Container(
+                      width: 1,
+                      height: 32,
+                      color: colors.outlineVariant,
+                    ),
                     _buildIdStat(
                       label: 'Total Credits',
                       value: '136 / 140',
@@ -184,20 +206,31 @@ class DigitalIdCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   onTap: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const GpaCalculatorView()),
+                      MaterialPageRoute(
+                        builder: (_) => const GpaCalculatorView(),
+                      ),
                     );
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: colors.primaryContainer.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: colors.primary.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.calculate_outlined, size: 14, color: colors.primary),
+                        Icon(
+                          Icons.calculate_outlined,
+                          size: 14,
+                          color: colors.primary,
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           'Open Semester GPA & Honors Simulator',
@@ -217,20 +250,31 @@ class DigitalIdCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   onTap: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const ExamHallPassView()),
+                      MaterialPageRoute(
+                        builder: (_) => const ExamHallPassView(),
+                      ),
                     );
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: colors.secondary.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: colors.secondary.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: colors.secondary.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.badge_outlined, size: 14, color: colors.secondary),
+                        Icon(
+                          Icons.badge_outlined,
+                          size: 14,
+                          color: colors.secondary,
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           'Exam Hall Pass & Seat Finder',
@@ -295,10 +339,7 @@ class DigitalIdCard extends StatelessWidget {
         ),
         Text(
           subtext,
-          style: TextStyle(
-            color: colors.onSurfaceVariant,
-            fontSize: 8,
-          ),
+          style: TextStyle(color: colors.onSurfaceVariant, fontSize: 8),
         ),
       ],
     );

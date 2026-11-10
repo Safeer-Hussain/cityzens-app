@@ -17,6 +17,7 @@ import 'package:cityzens_app/presentation/scanner/scanner_provider.dart';
 import 'package:cityzens_app/presentation/ai_tutor/ai_tutor_provider.dart';
 import 'package:cityzens_app/presentation/campus/campus_feed_provider.dart';
 import 'package:cityzens_app/presentation/shell/adaptive_scaffold.dart';
+
 import '../helpers/test_database.dart';
 
 void main() {
@@ -34,13 +35,19 @@ void main() {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<ThemeProvider>.value(value: themeProvider),
-        ChangeNotifierProvider<ConnectivityService>.value(value: connectivityService),
+        ChangeNotifierProvider<ConnectivityService>.value(
+          value: connectivityService,
+        ),
         ChangeNotifierProvider<TelemetryService>.value(value: telemetryService),
-        ChangeNotifierProvider<AttendanceProvider>.value(value: attendanceProvider),
+        ChangeNotifierProvider<AttendanceProvider>.value(
+          value: attendanceProvider,
+        ),
         ChangeNotifierProvider<LibraryProvider>.value(value: libraryProvider),
         ChangeNotifierProvider<ScannerProvider>.value(value: scannerProvider),
         ChangeNotifierProvider<AiTutorProvider>.value(value: aiTutorProvider),
-        ChangeNotifierProvider<CampusFeedProvider>.value(value: campusFeedProvider),
+        ChangeNotifierProvider<CampusFeedProvider>.value(
+          value: campusFeedProvider,
+        ),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, theme, _) {
@@ -90,114 +97,126 @@ void main() {
       await campusFeedProvider.loadFeed();
     });
 
-    testWidgets('Renders portrait shell with zero duplicate Hero tag exceptions', (tester) async {
-      tester.view.physicalSize = const Size(1080, 2400);
-      tester.view.devicePixelRatio = 2.75;
-      addTearDown(tester.view.resetPhysicalSize);
+    testWidgets(
+      'Renders portrait shell with zero duplicate Hero tag exceptions',
+      (tester) async {
+        tester.view.physicalSize = const Size(1080, 2400);
+        tester.view.devicePixelRatio = 2.75;
+        addTearDown(tester.view.resetPhysicalSize);
 
-      await tester.pumpWidget(
-        createTestWidget(
-          child: const AdaptiveScaffold(),
-          themeProvider: themeProvider,
-          attendanceProvider: attendanceProvider,
-          libraryProvider: libraryProvider,
-          scannerProvider: scannerProvider,
-          aiTutorProvider: aiTutorProvider,
-          campusFeedProvider: campusFeedProvider,
-          connectivityService: connectivityService,
-          telemetryService: telemetryService,
-        ),
-      );
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          createTestWidget(
+            child: const AdaptiveScaffold(),
+            themeProvider: themeProvider,
+            attendanceProvider: attendanceProvider,
+            libraryProvider: libraryProvider,
+            scannerProvider: scannerProvider,
+            aiTutorProvider: aiTutorProvider,
+            campusFeedProvider: campusFeedProvider,
+            connectivityService: connectivityService,
+            telemetryService: telemetryService,
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      // Look for FAB and verify tag is unique
-      final fabFinder = find.byType(FloatingActionButton);
-      expect(fabFinder, findsOneWidget);
+        // Look for FAB and verify tag is unique
+        final fabFinder = find.byType(FloatingActionButton);
+        expect(fabFinder, findsOneWidget);
 
-      final fab = tester.widget<FloatingActionButton>(fabFinder);
-      expect(fab.heroTag, equals('fab_attendance_checkin'));
-    });
+        final fab = tester.widget<FloatingActionButton>(fabFinder);
+        expect(fab.heroTag, equals('fab_attendance_checkin'));
+      },
+    );
 
-    testWidgets('Renders 800x360 landscape viewport with NavigationRail and ZERO RenderFlex overflows', (tester) async {
-      // Set to 800x360 dp landscape
-      tester.view.physicalSize = const Size(800, 360);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+    testWidgets(
+      'Renders 800x360 landscape viewport with NavigationRail and ZERO RenderFlex overflows',
+      (tester) async {
+        // Set to 800x360 dp landscape
+        tester.view.physicalSize = const Size(800, 360);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
 
-      await tester.pumpWidget(
-        createTestWidget(
-          child: const AdaptiveScaffold(),
-          themeProvider: themeProvider,
-          attendanceProvider: attendanceProvider,
-          libraryProvider: libraryProvider,
-          scannerProvider: scannerProvider,
-          aiTutorProvider: aiTutorProvider,
-          campusFeedProvider: campusFeedProvider,
-          connectivityService: connectivityService,
-          telemetryService: telemetryService,
-        ),
-      );
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          createTestWidget(
+            child: const AdaptiveScaffold(),
+            themeProvider: themeProvider,
+            attendanceProvider: attendanceProvider,
+            libraryProvider: libraryProvider,
+            scannerProvider: scannerProvider,
+            aiTutorProvider: aiTutorProvider,
+            campusFeedProvider: campusFeedProvider,
+            connectivityService: connectivityService,
+            telemetryService: telemetryService,
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      // NavigationRail must be active instead of NavigationBar
-      expect(find.byType(NavigationRail), findsOneWidget);
-      expect(find.byType(NavigationBar), findsNothing);
+        // NavigationRail must be active instead of NavigationBar
+        expect(find.byType(NavigationRail), findsOneWidget);
+        expect(find.byType(NavigationBar), findsNothing);
 
-      // Verify zero Flutter errors / RenderFlex overflow stripes
-      expect(tester.takeException(), isNull);
-    });
+        // Verify zero Flutter errors / RenderFlex overflow stripes
+        expect(tester.takeException(), isNull);
+      },
+    );
 
-    testWidgets('Instant Dark and Light theme switching updates UI dynamically', (tester) async {
-      tester.view.physicalSize = const Size(400, 800);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+    testWidgets(
+      'Instant Dark and Light theme switching updates UI dynamically',
+      (tester) async {
+        tester.view.physicalSize = const Size(400, 800);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
 
-      await tester.pumpWidget(
-        createTestWidget(
-          child: const AdaptiveScaffold(),
-          themeProvider: themeProvider,
-          attendanceProvider: attendanceProvider,
-          libraryProvider: libraryProvider,
-          scannerProvider: scannerProvider,
-          aiTutorProvider: aiTutorProvider,
-          campusFeedProvider: campusFeedProvider,
-          connectivityService: connectivityService,
-          telemetryService: telemetryService,
-        ),
-      );
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          createTestWidget(
+            child: const AdaptiveScaffold(),
+            themeProvider: themeProvider,
+            attendanceProvider: attendanceProvider,
+            libraryProvider: libraryProvider,
+            scannerProvider: scannerProvider,
+            aiTutorProvider: aiTutorProvider,
+            campusFeedProvider: campusFeedProvider,
+            connectivityService: connectivityService,
+            telemetryService: telemetryService,
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      expect(themeProvider.isDarkMode, isTrue);
+        expect(themeProvider.isDarkMode, isTrue);
 
-      // Tap theme toggle button
-      final themeToggleBtn = find.byTooltip('Toggle Dark/Light Mode');
-      expect(themeToggleBtn, findsOneWidget);
-      await tester.tap(themeToggleBtn);
-      await tester.pumpAndSettle();
+        // Tap theme toggle button
+        final themeToggleBtn = find.byTooltip('Toggle Dark/Light Mode');
+        expect(themeToggleBtn, findsOneWidget);
+        await tester.tap(themeToggleBtn);
+        await tester.pumpAndSettle();
 
-      expect(themeProvider.isDarkMode, isFalse);
-    });
+        expect(themeProvider.isDarkMode, isFalse);
+      },
+    );
 
-    testWidgets('AttendanceTrendChart renders full-width edge-to-edge without overflow', (tester) async {
-      tester.view.physicalSize = const Size(400, 800);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+    testWidgets(
+      'AttendanceTrendChart renders full-width edge-to-edge without overflow',
+      (tester) async {
+        tester.view.physicalSize = const Size(400, 800);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
 
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.darkTheme(),
-          home: const Scaffold(
-            body: Padding(
-              padding: EdgeInsets.all(16),
-              child: AttendanceTrendChart(currentPercentage: 91.4),
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.darkTheme(),
+            home: const Scaffold(
+              body: Padding(
+                padding: EdgeInsets.all(16),
+                child: AttendanceTrendChart(currentPercentage: 91.4),
+              ),
             ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.byType(AttendanceTrendChart), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    });
+        expect(find.byType(AttendanceTrendChart), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
   });
 }

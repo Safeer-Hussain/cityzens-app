@@ -1,17 +1,20 @@
 import 'dart:math';
+
 import 'package:flutter/services.dart';
 
 class NativeCameraBridge {
-  static const MethodChannel _channel =
-      MethodChannel('com.safeer.cityzens/native_camera');
+  static const MethodChannel _channel = MethodChannel(
+    'com.safeer.cityzens/native_camera',
+  );
 
   bool _isTorchOn = false;
   bool get isTorchOn => _isTorchOn;
 
   Future<Map<String, dynamic>> initializeCameraSensor() async {
     try {
-      final result =
-          await _channel.invokeMethod<Map<dynamic, dynamic>>('initializeCameraSensor');
+      final result = await _channel.invokeMethod<Map<dynamic, dynamic>>(
+        'initializeCameraSensor',
+      );
       if (result != null) {
         return Map<String, dynamic>.from(result);
       }

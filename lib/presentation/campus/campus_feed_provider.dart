@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+
 import '../../data/models/campus_post.dart';
 import '../../data/models/campus_comment.dart';
 import '../../data/repositories/campus_feed_repository.dart';
@@ -50,7 +51,9 @@ class CampusFeedProvider extends ChangeNotifier {
 
     final current = _allPosts[index];
     final optimisticLiked = !current.isLiked;
-    final optimisticCount = optimisticLiked ? current.likesCount + 1 : current.likesCount - 1;
+    final optimisticCount = optimisticLiked
+        ? current.likesCount + 1
+        : current.likesCount - 1;
 
     // 1. Immediate optimistic UI mutation
     _allPosts[index] = current.copyWith(

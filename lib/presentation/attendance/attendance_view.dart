@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/utils/app_feedback.dart';
 import '../../data/models/course_attendance.dart';
 import '../exam/exam_hall_pass_view.dart';
@@ -14,7 +15,8 @@ class AttendanceView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Consumer<AttendanceProvider>(
       builder: (context, provider, _) {
@@ -80,7 +82,11 @@ class AttendanceView extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.event_seat_rounded, color: colors.secondary, size: 20),
+                  Icon(
+                    Icons.event_seat_rounded,
+                    color: colors.secondary,
+                    size: 20,
+                  ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Column(
@@ -104,7 +110,11 @@ class AttendanceView extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Icon(Icons.arrow_forward_ios_rounded, size: 12, color: colors.onSurfaceVariant),
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 12,
+                    color: colors.onSurfaceVariant,
+                  ),
                 ],
               ),
             ),
@@ -130,7 +140,11 @@ class AttendanceView extends StatelessWidget {
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                icon: Icon(Icons.note_add_outlined, size: 16, color: colors.primary),
+                icon: Icon(
+                  Icons.note_add_outlined,
+                  size: 16,
+                  color: colors.primary,
+                ),
                 label: Text(
                   'Submit Leave',
                   style: TextStyle(
@@ -144,7 +158,9 @@ class AttendanceView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          ...provider.courses.map((course) => _buildCourseCard(context, course, provider, colors)),
+          ...provider.courses.map(
+            (course) => _buildCourseCard(context, course, provider, colors),
+          ),
           const SizedBox(height: 80),
         ],
       ),
@@ -205,7 +221,11 @@ class AttendanceView extends StatelessWidget {
                         minimumSize: Size.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      icon: Icon(Icons.note_add_outlined, size: 14, color: colors.primary),
+                      icon: Icon(
+                        Icons.note_add_outlined,
+                        size: 14,
+                        color: colors.primary,
+                      ),
                       label: Text(
                         'Submit Leave',
                         style: TextStyle(
@@ -214,12 +234,16 @@ class AttendanceView extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      onPressed: () => _showLeaveRequestModal(context, provider),
+                      onPressed: () =>
+                          _showLeaveRequestModal(context, provider),
                     ),
                   ],
                 ),
                 const SizedBox(height: 6),
-                ...provider.courses.map((course) => _buildCourseCard(context, course, provider, colors)),
+                ...provider.courses.map(
+                  (course) =>
+                      _buildCourseCard(context, course, provider, colors),
+                ),
                 const SizedBox(height: 60),
               ],
             ),
@@ -246,11 +270,15 @@ class AttendanceView extends StatelessWidget {
           Expanded(
             child: InkWell(
               borderRadius: BorderRadius.circular(8),
-              onTap: provider.isStudentMode ? null : () => provider.toggleRoleMode(),
+              onTap: provider.isStudentMode
+                  ? null
+                  : () => provider.toggleRoleMode(),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
-                  color: provider.isStudentMode ? colors.primary : Colors.transparent,
+                  color: provider.isStudentMode
+                      ? colors.primary
+                      : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -260,7 +288,9 @@ class AttendanceView extends StatelessWidget {
                     Icon(
                       Icons.school_rounded,
                       size: 15,
-                      color: provider.isStudentMode ? colors.onPrimary : colors.onSurfaceVariant,
+                      color: provider.isStudentMode
+                          ? colors.onPrimary
+                          : colors.onSurfaceVariant,
                     ),
                     const SizedBox(width: 4),
                     Flexible(
@@ -270,7 +300,9 @@ class AttendanceView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: provider.isStudentMode ? colors.onPrimary : colors.onSurfaceVariant,
+                          color: provider.isStudentMode
+                              ? colors.onPrimary
+                              : colors.onSurfaceVariant,
                         ),
                       ),
                     ),
@@ -282,11 +314,15 @@ class AttendanceView extends StatelessWidget {
           Expanded(
             child: InkWell(
               borderRadius: BorderRadius.circular(8),
-              onTap: !provider.isStudentMode ? null : () => provider.toggleRoleMode(),
+              onTap: !provider.isStudentMode
+                  ? null
+                  : () => provider.toggleRoleMode(),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
-                  color: !provider.isStudentMode ? colors.primary : Colors.transparent,
+                  color: !provider.isStudentMode
+                      ? colors.primary
+                      : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -296,7 +332,9 @@ class AttendanceView extends StatelessWidget {
                     Icon(
                       Icons.badge_rounded,
                       size: 15,
-                      color: !provider.isStudentMode ? colors.onPrimary : colors.onSurfaceVariant,
+                      color: !provider.isStudentMode
+                          ? colors.onPrimary
+                          : colors.onSurfaceVariant,
                     ),
                     const SizedBox(width: 4),
                     Flexible(
@@ -306,7 +344,9 @@ class AttendanceView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: !provider.isStudentMode ? colors.onPrimary : colors.onSurfaceVariant,
+                          color: !provider.isStudentMode
+                              ? colors.onPrimary
+                              : colors.onSurfaceVariant,
                         ),
                       ),
                     ),
@@ -383,7 +423,10 @@ class AttendanceView extends StatelessWidget {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: isGood
                                 ? colors.secondary.withValues(alpha: 0.15)
@@ -416,9 +459,24 @@ class AttendanceView extends StatelessWidget {
                       spacing: 6,
                       runSpacing: 4,
                       children: [
-                        _buildStatChip('Present', '${provider.totalPresentCount}', colors.secondary, colors),
-                        _buildStatChip('Absent', '${provider.totalAbsentCount}', colors.error, colors),
-                        _buildStatChip('Excused', '${provider.totalExcusedCount}', colors.tertiary, colors),
+                        _buildStatChip(
+                          'Present',
+                          '${provider.totalPresentCount}',
+                          colors.secondary,
+                          colors,
+                        ),
+                        _buildStatChip(
+                          'Absent',
+                          '${provider.totalAbsentCount}',
+                          colors.error,
+                          colors,
+                        ),
+                        _buildStatChip(
+                          'Excused',
+                          '${provider.totalExcusedCount}',
+                          colors.tertiary,
+                          colors,
+                        ),
                       ],
                     ),
                   ],
@@ -431,7 +489,12 @@ class AttendanceView extends StatelessWidget {
     );
   }
 
-  Widget _buildStatChip(String label, String value, Color color, ColorScheme colors) {
+  Widget _buildStatChip(
+    String label,
+    String value,
+    Color color,
+    ColorScheme colors,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
@@ -524,7 +587,9 @@ class AttendanceView extends StatelessWidget {
         color: colors.surfaceContainer,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isRisk ? colors.error.withValues(alpha: 0.6) : colors.outlineVariant,
+          color: isRisk
+              ? colors.error.withValues(alpha: 0.6)
+              : colors.outlineVariant,
         ),
       ),
       child: Column(
@@ -570,20 +635,31 @@ class AttendanceView extends StatelessWidget {
           const SizedBox(height: 3),
           Row(
             children: [
-              Icon(Icons.person_outline_rounded, size: 14, color: colors.onSurfaceVariant),
+              Icon(
+                Icons.person_outline_rounded,
+                size: 14,
+                color: colors.onSurfaceVariant,
+              ),
               const SizedBox(width: 4),
               Text(
                 course.instructor,
                 style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11),
               ),
               const SizedBox(width: 12),
-              Icon(Icons.room_outlined, size: 14, color: colors.onSurfaceVariant),
+              Icon(
+                Icons.room_outlined,
+                size: 14,
+                color: colors.onSurfaceVariant,
+              ),
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
                   course.room,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11),
+                  style: TextStyle(
+                    color: colors.onSurfaceVariant,
+                    fontSize: 11,
+                  ),
                 ),
               ),
             ],
@@ -640,7 +716,10 @@ class AttendanceView extends StatelessWidget {
     );
   }
 
-  void _showCheckInOptionsModal(BuildContext context, AttendanceProvider provider) {
+  void _showCheckInOptionsModal(
+    BuildContext context,
+    AttendanceProvider provider,
+  ) {
     final colors = Theme.of(context).colorScheme;
 
     showModalBottomSheet(
@@ -680,7 +759,10 @@ class AttendanceView extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   'Select high-speed automated verification method',
-                  style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12),
+                  style: TextStyle(
+                    color: colors.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 ListTile(
@@ -691,15 +773,26 @@ class AttendanceView extends StatelessWidget {
                       color: colors.primaryContainer,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(Icons.qr_code_scanner_rounded, color: colors.primary, size: 22),
+                    child: Icon(
+                      Icons.qr_code_scanner_rounded,
+                      color: colors.primary,
+                      size: 22,
+                    ),
                   ),
                   title: Text(
                     'Scan Hall QR Code',
-                    style: TextStyle(color: colors.onSurface, fontWeight: FontWeight.w700, fontSize: 14),
+                    style: TextStyle(
+                      color: colors.onSurface,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                    ),
                   ),
                   subtitle: Text(
                     'Optical viewfinder camera scanner with hardware checksum',
-                    style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11),
+                    style: TextStyle(
+                      color: colors.onSurfaceVariant,
+                      fontSize: 11,
+                    ),
                   ),
                   onTap: () {
                     Navigator.of(sheetContext).pop();
@@ -717,15 +810,26 @@ class AttendanceView extends StatelessWidget {
                       color: colors.secondaryContainer,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(Icons.pin_rounded, color: colors.secondary, size: 22),
+                    child: Icon(
+                      Icons.pin_rounded,
+                      color: colors.secondary,
+                      size: 22,
+                    ),
                   ),
                   title: Text(
                     'Enter 6-Digit Lecture PIN',
-                    style: TextStyle(color: colors.onSurface, fontWeight: FontWeight.w700, fontSize: 14),
+                    style: TextStyle(
+                      color: colors.onSurface,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                    ),
                   ),
                   subtitle: Text(
                     'Manual passcode provided on the lecture projection screen',
-                    style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11),
+                    style: TextStyle(
+                      color: colors.onSurfaceVariant,
+                      fontSize: 11,
+                    ),
                   ),
                   onTap: () {
                     Navigator.of(sheetContext).pop();
@@ -744,7 +848,9 @@ class AttendanceView extends StatelessWidget {
   void _showManualPinModal(BuildContext context, AttendanceProvider provider) {
     final colors = Theme.of(context).colorScheme;
     final pinController = TextEditingController();
-    String selectedCourse = provider.courses.isNotEmpty ? provider.courses.first.code : 'CS-401';
+    String selectedCourse = provider.courses.isNotEmpty
+        ? provider.courses.first.code
+        : 'CS-401';
     String? errorText;
 
     showModalBottomSheet(
@@ -794,12 +900,17 @@ class AttendanceView extends StatelessWidget {
                         initialValue: selectedCourse,
                         decoration: InputDecoration(
                           labelText: 'Select Course',
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                         items: provider.courses.map((c) {
                           return DropdownMenuItem(
                             value: c.code,
-                            child: Text('${c.code} - ${c.title}', overflow: TextOverflow.ellipsis),
+                            child: Text(
+                              '${c.code} - ${c.title}',
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           );
                         }).toList(),
                         onChanged: (val) {
@@ -817,7 +928,9 @@ class AttendanceView extends StatelessWidget {
                           labelText: '6-Digit Lecture PIN',
                           hintText: 'e.g. 892014',
                           errorText: errorText,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 14),
@@ -826,7 +939,9 @@ class AttendanceView extends StatelessWidget {
                           backgroundColor: colors.primary,
                           foregroundColor: colors.onPrimary,
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                         onPressed: () async {
                           final pin = pinController.text.trim();
@@ -853,7 +968,10 @@ class AttendanceView extends StatelessWidget {
                             );
                           }
                         },
-                        child: const Text('Verify & Record Attendance', style: TextStyle(fontWeight: FontWeight.w700)),
+                        child: const Text(
+                          'Verify & Record Attendance',
+                          style: TextStyle(fontWeight: FontWeight.w700),
+                        ),
                       ),
                     ],
                   ),
@@ -866,10 +984,15 @@ class AttendanceView extends StatelessWidget {
     );
   }
 
-  void _showLeaveRequestModal(BuildContext context, AttendanceProvider provider) {
+  void _showLeaveRequestModal(
+    BuildContext context,
+    AttendanceProvider provider,
+  ) {
     final colors = Theme.of(context).colorScheme;
     final reasonController = TextEditingController();
-    String selectedCourse = provider.courses.isNotEmpty ? provider.courses.first.code : 'CS-401';
+    String selectedCourse = provider.courses.isNotEmpty
+        ? provider.courses.first.code
+        : 'CS-401';
     DateTime selectedDate = DateTime.now();
     String? errorText;
 
@@ -918,19 +1041,27 @@ class AttendanceView extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         'Formal leave request approved into the SQLite ledger',
-                        style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11),
+                        style: TextStyle(
+                          color: colors.onSurfaceVariant,
+                          fontSize: 11,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<String>(
                         initialValue: selectedCourse,
                         decoration: InputDecoration(
                           labelText: 'Select Course',
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                         items: provider.courses.map((c) {
                           return DropdownMenuItem(
                             value: c.code,
-                            child: Text('${c.code} - ${c.title}', overflow: TextOverflow.ellipsis),
+                            child: Text(
+                              '${c.code} - ${c.title}',
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           );
                         }).toList(),
                         onChanged: (val) {
@@ -947,7 +1078,9 @@ class AttendanceView extends StatelessWidget {
                           labelText: 'Reason for Excused Absence',
                           hintText: 'e.g. Medical appointment with formal physician certificate.',
                           errorText: errorText,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 14),
@@ -956,7 +1089,9 @@ class AttendanceView extends StatelessWidget {
                           backgroundColor: colors.primary,
                           foregroundColor: colors.onPrimary,
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                         onPressed: () async {
                           final reason = reasonController.text.trim();
@@ -984,7 +1119,10 @@ class AttendanceView extends StatelessWidget {
                             );
                           }
                         },
-                        child: const Text('Submit Official Leave', style: TextStyle(fontWeight: FontWeight.w700)),
+                        child: const Text(
+                          'Submit Official Leave',
+                          style: TextStyle(fontWeight: FontWeight.w700),
+                        ),
                       ),
                     ],
                   ),

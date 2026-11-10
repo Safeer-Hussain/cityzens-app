@@ -1,4 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+
+import '../../core/utils/citation_generator.dart';
 import '../../data/models/book.dart';
 import '../../data/repositories/library_repository.dart';
 
@@ -11,6 +14,7 @@ class LibraryProvider extends ChangeNotifier {
   String _selectedCategory = 'All';
   String _searchQuery = '';
   String? _errorMessage;
+  CitationStyle _selectedCitationStyle = CitationStyle.bibtex;
 
   LibraryProvider({required this.repository});
 
@@ -20,9 +24,13 @@ class LibraryProvider extends ChangeNotifier {
   String get selectedCategory => _selectedCategory;
   String get searchQuery => _searchQuery;
   String? get errorMessage => _errorMessage;
+  CitationStyle get selectedCitationStyle => _selectedCitationStyle;
 
   double get totalOverdueFines {
-    return _activeLoans.fold(0.0, (acc, item) => acc + item.loan.calculatedFine);
+    return _activeLoans.fold(
+      0.0,
+      (acc, item) => acc + item.loan.calculatedFine,
+    );
   }
 
   int get borrowedCount => _activeLoans.length;
@@ -135,5 +143,38 @@ class LibraryProvider extends ChangeNotifier {
       notifyListeners();
       return false;
     }
+  }
+
+  void setCitationStyle(CitationStyle style) {
+    if (_selectedCitationStyle == style) return;
+    _selectedCitationStyle = style;
+    notifyListeners();
+  }
+
+  String getCitation(BookModel book, [CitationStyle? style]) {
+    return CitationGenerator.format(book, style ?? _selectedCitationStyle);
+  }
+
+  String generateBatchBibliography({
+    List<BookModel>? customBooks,
+    CitationStyle? style,
+  }) {
+    final targetBooks = customBooks ?? _books;
+    return CitationGenerator.generateMarkdownBibliography(
+      books: targetBooks,
+      style: style ?? _selectedCitationStyle,
+    );
+  }
+
+  Future<void> copyCitationToClipboard(
+    BookModel book, [
+    CitationStyle? style,
+  ]) async {
+    final text = getCitation(book, style);
+    await Clipboard.setData(ClipboardData(text: text));
+  }
+
+  Future<void> copyTextToClipboard(String text) async {
+    await Clipboard.setData(ClipboardData(text: text));
   }
 }

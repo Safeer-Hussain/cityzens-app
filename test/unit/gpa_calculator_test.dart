@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cityzens_app/data/repositories/transcript_repository.dart';
 import 'package:cityzens_app/presentation/gpa_calculator/gpa_calculator_provider.dart';
+
 import '../helpers/test_database.dart';
 
 void main() {
@@ -15,11 +16,14 @@ void main() {
       await provider.loadTranscripts();
     });
 
-    test('Initializes with 7 historical semesters and computes prior 3.94 CGPA', () {
-      expect(provider.transcripts.length, equals(7));
-      expect(provider.priorCredits, equals(118));
-      expect(provider.priorCgpa, equals(3.94));
-    });
+    test(
+      'Initializes with 7 historical semesters and computes prior 3.94 CGPA',
+      () {
+        expect(provider.transcripts.length, equals(7));
+        expect(provider.priorCredits, equals(118));
+        expect(provider.priorCgpa, equals(3.94));
+      },
+    );
 
     test('All A simulation yields 4.00 semester GPA and elevates projected CGPA to 3.95', () {
       expect(provider.simulatedCourses.length, equals(5));

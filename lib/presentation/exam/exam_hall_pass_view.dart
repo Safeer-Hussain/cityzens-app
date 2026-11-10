@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/utils/app_feedback.dart';
 import '../../core/utils/exam_cryptography.dart';
 import '../../data/models/exam_hall_pass.dart';
@@ -29,7 +30,8 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Consumer<ExamProvider>(
       builder: (context, provider, _) {
@@ -37,7 +39,9 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
           return Scaffold(
             backgroundColor: colors.surface,
             appBar: _buildAppBar(context, colors, isLandscape, provider),
-            body: Center(child: CircularProgressIndicator(color: colors.primary)),
+            body: Center(
+              child: CircularProgressIndicator(color: colors.primary),
+            ),
           );
         }
 
@@ -122,7 +126,10 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
             onPressed: () async {
               await provider.loadPasses();
               if (context.mounted) {
-                AppFeedback.showInfo(context, 'Exam passes updated from SQLite registry.');
+                AppFeedback.showInfo(
+                  context,
+                  'Exam passes updated from SQLite registry.',
+                );
               }
             },
           ),
@@ -273,7 +280,10 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
     );
   }
 
-  Widget _buildDigitalAdmissionPassCard(ExamProvider provider, ColorScheme colors) {
+  Widget _buildDigitalAdmissionPassCard(
+    ExamProvider provider,
+    ColorScheme colors,
+  ) {
     final pass = provider.selectedPass;
     if (pass == null) {
       return Container(
@@ -321,7 +331,9 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
                   child: Row(
                     children: [
                       Icon(
-                        isVerified ? Icons.verified_user_rounded : Icons.shield_outlined,
+                        isVerified
+                            ? Icons.verified_user_rounded
+                            : Icons.shield_outlined,
                         color: colors.onPrimary,
                         size: 16,
                       ),
@@ -400,7 +412,10 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
                     ),
                     // High-contrast Desk Badge
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: colors.primaryContainer,
                         borderRadius: BorderRadius.circular(10),
@@ -493,7 +508,9 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
                   ),
                 ),
                 const SizedBox(height: 6),
-                ...pass.instructions.map((ins) => _buildInstructionItem(ins, colors)),
+                ...pass.instructions.map(
+                  (ins) => _buildInstructionItem(ins, colors),
+                ),
               ],
             ),
           ),
@@ -632,7 +649,9 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
                 child: Row(
                   children: [
                     Icon(
-                      isVerified ? Icons.check_circle_rounded : Icons.lock_clock_rounded,
+                      isVerified
+                          ? Icons.check_circle_rounded
+                          : Icons.lock_clock_rounded,
                       size: 15,
                       color: isVerified ? colors.secondary : colors.primary,
                     ),
@@ -690,17 +709,24 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 8),
               side: BorderSide(color: colors.outlineVariant),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             icon: provider.isVerifying
                 ? SizedBox(
                     width: 14,
                     height: 14,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: colors.primary),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: colors.primary,
+                    ),
                   )
                 : Icon(Icons.security_rounded, size: 14, color: colors.primary),
             label: Text(
-              provider.isVerifying ? 'Authenticating...' : 'Validate Cryptographic Token',
+              provider.isVerifying
+                  ? 'Authenticating...'
+                  : 'Validate Cryptographic Token',
               style: TextStyle(
                 color: colors.primary,
                 fontWeight: FontWeight.w700,
@@ -736,7 +762,11 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.check_circle_outline_rounded, size: 13, color: colors.primary),
+          Icon(
+            Icons.check_circle_outline_rounded,
+            size: 13,
+            color: colors.primary,
+          ),
           const SizedBox(width: 6),
           Expanded(
             child: Text(
@@ -789,7 +819,10 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
                       '${hall.building} (${hall.floor})',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: colors.onSurfaceVariant, fontSize: 10),
+                      style: TextStyle(
+                        color: colors.onSurfaceVariant,
+                        fontSize: 10,
+                      ),
                     ),
                   ],
                 ),
@@ -805,7 +838,9 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
                     child: Text(
                       '${h.name} (${h.totalCapacity} Seats)',
                       style: TextStyle(
-                        fontWeight: h.name == hall.name ? FontWeight.w800 : FontWeight.w500,
+                        fontWeight: h.name == hall.name
+                            ? FontWeight.w800
+                            : FontWeight.w500,
                       ),
                     ),
                   );
@@ -826,7 +861,11 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.co_present_rounded, size: 14, color: colors.onSurfaceVariant),
+                Icon(
+                  Icons.co_present_rounded,
+                  size: 14,
+                  color: colors.onSurfaceVariant,
+                ),
                 const SizedBox(width: 6),
                 Flexible(
                   child: Text(
@@ -851,7 +890,11 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
             runSpacing: 4,
             children: [
               _buildLegendPill('Your Seat', colors.primary, colors),
-              _buildLegendPill('Occupied', colors.surfaceContainerHighest, colors),
+              _buildLegendPill(
+                'Occupied',
+                colors.surfaceContainerHighest,
+                colors,
+              ),
               _buildLegendPill('Available', colors.outlineVariant, colors),
               _buildLegendPill('Priority/Accessible', colors.tertiary, colors),
             ],
@@ -994,15 +1037,22 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: seat.isUserSeat ? colors.primary : colors.surfaceContainerHighest,
+                    color: seat.isUserSeat
+                        ? colors.primary
+                        : colors.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     'Desk ${seat.deskCode}',
                     style: TextStyle(
-                      color: seat.isUserSeat ? colors.onPrimary : colors.onSurface,
+                      color: seat.isUserSeat
+                          ? colors.onPrimary
+                          : colors.onSurface,
                       fontWeight: FontWeight.w800,
                       fontSize: 11,
                     ),
@@ -1017,10 +1067,10 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
                         seat.isUserSeat
                             ? 'Your Assigned Examination Desk'
                             : seat.isOccupied
-                                ? 'Candidate: ${seat.assignedCandidateMasked ?? "Occupied"}'
-                                : seat.isAccessible
-                                    ? 'Priority Mobility Desk'
-                                    : 'Vacant Desk',
+                            ? 'Candidate: ${seat.assignedCandidateMasked ?? "Occupied"}'
+                            : seat.isAccessible
+                            ? 'Priority Mobility Desk'
+                            : 'Vacant Desk',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -1033,7 +1083,10 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
                         '${seat.hallName}  •  Row ${seat.row}, Seat ${seat.number}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: colors.onSurfaceVariant, fontSize: 10),
+                        style: TextStyle(
+                          color: colors.onSurfaceVariant,
+                          fontSize: 10,
+                        ),
                       ),
                     ],
                   ),
@@ -1102,7 +1155,8 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: provider.passes.length,
-            separatorBuilder: (_, _) => Divider(color: colors.outlineVariant, height: 1),
+            separatorBuilder: (_, _) =>
+                Divider(color: colors.outlineVariant, height: 1),
             itemBuilder: (_, idx) {
               final pass = provider.passes[idx];
               final isCurrent = provider.selectedPass?.id == pass.id;
@@ -1118,15 +1172,22 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
                   child: Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 3,
+                        ),
                         decoration: BoxDecoration(
-                          color: isCurrent ? colors.primary : colors.surfaceContainerHighest,
+                          color: isCurrent
+                              ? colors.primary
+                              : colors.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
                           pass.courseCode,
                           style: TextStyle(
-                            color: isCurrent ? colors.onPrimary : colors.onSurface,
+                            color: isCurrent
+                                ? colors.onPrimary
+                                : colors.onSurface,
                             fontWeight: FontWeight.w800,
                             fontSize: 11,
                           ),
@@ -1151,7 +1212,10 @@ class _ExamHallPassViewState extends State<ExamHallPassView> {
                               '${pass.hallName} (${pass.deskNumber})  •  ${pass.countdownFormatted}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(color: colors.onSurfaceVariant, fontSize: 10),
+                              style: TextStyle(
+                                color: colors.onSurfaceVariant,
+                                fontSize: 10,
+                              ),
                             ),
                           ],
                         ),

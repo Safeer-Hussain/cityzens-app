@@ -14,7 +14,7 @@ This backlog defines 25 granular, production-ready engineering sprints. Promptin
   - Visual seat assignment matrix for Turing Hall and Hopper Auditorium.
   - Offline timetable reminder notification triggers.
 
-- [ ] **Sprint 03: Library Citation BibTeX & APA 7th Edition Generator**
+- [x] **Sprint 03: Library Citation BibTeX & APA 7th Edition Generator**
   - 1-tap citation exporter for all 42 catalog books in BibTeX, APA, IEEE, and Chicago styles.
   - Direct clipboard copy and Markdown file export options.
   - Unit tests verifying citation formatting compliance.

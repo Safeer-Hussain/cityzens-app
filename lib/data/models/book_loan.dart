@@ -19,7 +19,8 @@ class BookLoanModel {
     required this.overdueFine,
   });
 
-  DateTime get borrowDateTime => DateTime.fromMillisecondsSinceEpoch(borrowDate);
+  DateTime get borrowDateTime =>
+      DateTime.fromMillisecondsSinceEpoch(borrowDate);
   DateTime get dueDateTime => DateTime.fromMillisecondsSinceEpoch(dueDate);
 
   int get daysRemaining {

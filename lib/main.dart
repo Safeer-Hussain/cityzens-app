@@ -1,7 +1,9 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'core/di/service_locator.dart';
 import 'core/services/connectivity_service.dart';
 import 'core/services/telemetry_service.dart';
@@ -23,25 +25,28 @@ import 'presentation/exam/exam_provider.dart';
 import 'presentation/splash/splash_view.dart';
 
 void main() {
-  runZonedGuarded(() async {
-    WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
 
-    FlutterError.onError = (FlutterErrorDetails details) {
-      FlutterError.presentError(details);
-    };
+      FlutterError.onError = (FlutterErrorDetails details) {
+        FlutterError.presentError(details);
+      };
 
-    SharedPreferences? prefs;
-    try {
-      prefs = await SharedPreferences.getInstance();
-      await setupServiceLocator(testPrefs: prefs);
-    } catch (_) {
-      // Graceful local initialization fallback
-    }
+      SharedPreferences? prefs;
+      try {
+        prefs = await SharedPreferences.getInstance();
+        await setupServiceLocator(testPrefs: prefs);
+      } catch (_) {
+        // Graceful local initialization fallback
+      }
 
-    runApp(CityzensApp(sharedPreferences: prefs));
-  }, (error, stack) {
-    // Top-level unhandled exception guard
-  });
+      runApp(CityzensApp(sharedPreferences: prefs));
+    },
+    (error, stack) {
+      // Top-level unhandled exception guard
+    },
+  );
 }
 
 class CityzensApp extends StatelessWidget {
@@ -63,7 +68,8 @@ class CityzensApp extends StatelessWidget {
           value: sl<TelemetryService>(),
         ),
         ChangeNotifierProvider<AttendanceProvider>(
-          create: (_) => AttendanceProvider(repository: sl<AttendanceRepository>()),
+          create: (_) =>
+              AttendanceProvider(repository: sl<AttendanceRepository>()),
         ),
         ChangeNotifierProvider<LibraryProvider>(
           create: (_) => LibraryProvider(repository: sl<LibraryRepository>()),
@@ -78,10 +84,12 @@ class CityzensApp extends StatelessWidget {
           ),
         ),
         ChangeNotifierProvider<CampusFeedProvider>(
-          create: (_) => CampusFeedProvider(repository: sl<CampusFeedRepository>()),
+          create: (_) =>
+              CampusFeedProvider(repository: sl<CampusFeedRepository>()),
         ),
         ChangeNotifierProvider<GpaCalculatorProvider>(
-          create: (_) => GpaCalculatorProvider(repository: sl<TranscriptRepository>()),
+          create: (_) =>
+              GpaCalculatorProvider(repository: sl<TranscriptRepository>()),
         ),
         ChangeNotifierProvider<ExamProvider>(
           create: (_) => ExamProvider(repository: sl<ExamRepository>()),

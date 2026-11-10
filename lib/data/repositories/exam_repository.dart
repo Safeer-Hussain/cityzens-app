@@ -1,5 +1,7 @@
 import 'dart:math';
+
 import 'package:sqflite/sqflite.dart';
+
 import '../../core/database/app_database.dart';
 import '../../core/utils/exam_cryptography.dart';
 import '../models/exam_hall_pass.dart';
@@ -13,10 +15,7 @@ class ExamRepository {
 
   /// Retrieves all examination hall passes sorted chronologically.
   Future<List<ExamHallPassModel>> getAllPasses() async {
-    final rows = await _db.query(
-      'exam_hall_passes',
-      orderBy: 'exam_date ASC',
-    );
+    final rows = await _db.query('exam_hall_passes', orderBy: 'exam_date ASC');
     return rows.map((r) => ExamHallPassModel.fromMap(r)).toList();
   }
 
@@ -71,52 +70,69 @@ class ExamRepository {
   }
 
   /// Generates a realistic, deterministic seat grid matrix for a given examination hall.
-  List<ExamSeat> generateHallMatrix(ExamHall hall, ExamHallPassModel? activePass) {
+  List<ExamSeat> generateHallMatrix(
+    ExamHall hall,
+    ExamHallPassModel? activePass,
+  ) {
     final seats = <ExamSeat>[];
     final seed = hall.name.hashCode;
     final random = Random(seed);
 
     for (final row in hall.rows) {
       for (int num = 1; num <= hall.seatsPerRow; num++) {
-        final isUserSeat = activePass != null &&
+        final isUserSeat =
+            activePass != null &&
             activePass.hallName.toLowerCase() == hall.name.toLowerCase() &&
             activePass.seatRow.toUpperCase() == row.toUpperCase() &&
             activePass.seatNumber == num;
 
         if (isUserSeat) {
-          seats.add(ExamSeat(
-            row: row,
-            number: num,
-            hallName: hall.name,
-            status: SeatStatus.assignedToUser,
-            assignedCandidateMasked: 'CTZ-***-8842 (YOU)',
-          ));
+          seats.add(
+            ExamSeat(
+              row: row,
+              number: num,
+              hallName: hall.name,
+              status: SeatStatus.assignedToUser,
+              assignedCandidateMasked: 'CTZ-***-8842 (YOU)',
+            ),
+          );
           continue;
         }
 
         // Accessible seating on front row ends
-        final isAccessible = (row == 'A' && (num <= 2 || num >= hall.seatsPerRow - 1));
+        final isAccessible =
+            (row == 'A' && (num <= 2 || num >= hall.seatsPerRow - 1));
         if (isAccessible) {
           final isAccOccupied = random.nextBool();
-          seats.add(ExamSeat(
-            row: row,
-            number: num,
-            hallName: hall.name,
-            status: isAccOccupied ? SeatStatus.occupied : SeatStatus.accessible,
-            assignedCandidateMasked: isAccOccupied ? 'CTZ-***-${1000 + random.nextInt(8999)}' : null,
-          ));
+          seats.add(
+            ExamSeat(
+              row: row,
+              number: num,
+              hallName: hall.name,
+              status: isAccOccupied
+                  ? SeatStatus.occupied
+                  : SeatStatus.accessible,
+              assignedCandidateMasked: isAccOccupied
+                  ? 'CTZ-***-${1000 + random.nextInt(8999)}'
+                  : null,
+            ),
+          );
           continue;
         }
 
         // Realistic ~65% occupancy density
         final isOccupied = random.nextDouble() < 0.65;
-        seats.add(ExamSeat(
-          row: row,
-          number: num,
-          hallName: hall.name,
-          status: isOccupied ? SeatStatus.occupied : SeatStatus.available,
-          assignedCandidateMasked: isOccupied ? 'CTZ-***-${1000 + random.nextInt(8999)}' : null,
-        ));
+        seats.add(
+          ExamSeat(
+            row: row,
+            number: num,
+            hallName: hall.name,
+            status: isOccupied ? SeatStatus.occupied : SeatStatus.available,
+            assignedCandidateMasked: isOccupied
+                ? 'CTZ-***-${1000 + random.nextInt(8999)}'
+                : null,
+          ),
+        );
       }
     }
 

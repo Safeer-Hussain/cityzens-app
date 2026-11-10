@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:dio/dio.dart';
+
 import '../services/telemetry_service.dart';
 
 class MockNetworkInterceptor extends Interceptor {
@@ -22,8 +24,11 @@ class MockNetworkInterceptor extends Interceptor {
           response: Response(
             requestOptions: options,
             statusCode: 503,
-            statusMessage: 'Simulated 503 Service Unavailable (Testing Resilience)',
-            data: {'error': 'Temporary campus gateway failure - retrying with exponential backoff'},
+            statusMessage:
+                'Simulated 503 Service Unavailable (Testing Resilience)',
+            data: {
+              'error': 'Temporary campus gateway failure - retrying with exponential backoff',
+            },
           ),
           type: DioExceptionType.badResponse,
         ),

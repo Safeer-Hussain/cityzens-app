@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+
 import '../../data/models/academic_transcript.dart';
 import '../../data/repositories/transcript_repository.dart';
 
@@ -15,8 +16,10 @@ class GpaCalculatorProvider extends ChangeNotifier {
   }
 
   bool get isLoading => _isLoading;
-  List<AcademicTranscriptModel> get transcripts => List.unmodifiable(_transcripts);
-  List<WhatIfCourseSimulation> get simulatedCourses => List.unmodifiable(_simulatedCourses);
+  List<AcademicTranscriptModel> get transcripts =>
+      List.unmodifiable(_transcripts);
+  List<WhatIfCourseSimulation> get simulatedCourses =>
+      List.unmodifiable(_simulatedCourses);
   String? get errorMessage => _errorMessage;
 
   void _initDefaultSimulationCourses() {
@@ -92,7 +95,9 @@ class GpaCalculatorProvider extends ChangeNotifier {
   void updateCourseGrade(String courseId, String grade) {
     final index = _simulatedCourses.indexWhere((c) => c.id == courseId);
     if (index != -1) {
-      _simulatedCourses[index] = _simulatedCourses[index].copyWith(expectedGrade: grade);
+      _simulatedCourses[index] = _simulatedCourses[index].copyWith(
+        expectedGrade: grade,
+      );
       notifyListeners();
     }
   }
@@ -100,7 +105,9 @@ class GpaCalculatorProvider extends ChangeNotifier {
   void updateCourseCredits(String courseId, int credits) {
     final index = _simulatedCourses.indexWhere((c) => c.id == courseId);
     if (index != -1) {
-      _simulatedCourses[index] = _simulatedCourses[index].copyWith(creditHours: credits);
+      _simulatedCourses[index] = _simulatedCourses[index].copyWith(
+        creditHours: credits,
+      );
       notifyListeners();
     }
   }

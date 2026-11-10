@@ -1,4 +1,5 @@
 import 'package:sqflite/sqflite.dart';
+
 import '../../core/database/app_database.dart';
 import '../models/campus_post.dart';
 import '../models/campus_comment.dart';
@@ -16,7 +17,11 @@ class CampusFeedRepository {
   }
 
   Future<CampusPostModel?> getPostById(String id) async {
-    final results = await _db.query('campus_posts', where: 'id = ?', whereArgs: [id]);
+    final results = await _db.query(
+      'campus_posts',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
     if (results.isEmpty) return null;
     return CampusPostModel.fromMap(results.first);
   }
@@ -26,7 +31,9 @@ class CampusFeedRepository {
     if (post == null) throw Exception('Post not found: $postId');
 
     final newIsLiked = !post.isLiked;
-    final newLikesCount = newIsLiked ? post.likesCount + 1 : post.likesCount - 1;
+    final newLikesCount = newIsLiked
+        ? post.likesCount + 1
+        : post.likesCount - 1;
 
     final updated = post.copyWith(
       isLiked: newIsLiked,
@@ -35,10 +42,7 @@ class CampusFeedRepository {
 
     await _db.update(
       'campus_posts',
-      {
-        'is_liked': updated.isLiked ? 1 : 0,
-        'likes_count': updated.likesCount,
-      },
+      {'is_liked': updated.isLiked ? 1 : 0, 'likes_count': updated.likesCount},
       where: 'id = ?',
       whereArgs: [postId],
     );
@@ -94,7 +98,11 @@ class CampusFeedRepository {
       await txn.insert('campus_comments', comment.toMap());
 
       // Update post comments count
-      final postRaw = await txn.query('campus_posts', where: 'id = ?', whereArgs: [postId]);
+      final postRaw = await txn.query(
+        'campus_posts',
+        where: 'id = ?',
+        whereArgs: [postId],
+      );
       if (postRaw.isNotEmpty) {
         final currentCount = (postRaw.first['comments_count'] as num).toInt();
         await txn.update(

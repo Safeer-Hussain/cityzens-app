@@ -1,10 +1,12 @@
 import 'dart:convert';
+
 import 'package:crypto/crypto.dart';
 
 /// Cryptographic utilities for generating and verifying tamper-evident
 /// optical examination passes and admission slip tokens.
 class ExamCryptography {
-  static const String _secretSalt = 'CITYZENS_ACADEMIC_REGISTRY_2026_SECURE_SALT';
+  static const String _secretSalt =
+      'CITYZENS_ACADEMIC_REGISTRY_2026_SECURE_SALT';
 
   /// Generates a tamper-evident SHA-256 cryptographic checksum for an examination pass.
   static String generateChecksum({
@@ -15,7 +17,8 @@ class ExamCryptography {
     required String deskNumber,
     required int examTimestamp,
   }) {
-    final rawPayload = '$passId|$studentId|$courseCode|$hallName|$deskNumber|$examTimestamp|$_secretSalt';
+    final rawPayload =
+        '$passId|$studentId|$courseCode|$hallName|$deskNumber|$examTimestamp|$_secretSalt';
     final bytes = utf8.encode(rawPayload);
     final digest = sha256.convert(bytes);
     return digest.toString();
@@ -50,7 +53,9 @@ class ExamCryptography {
     required String deskNumber,
     required String checksum,
   }) {
-    final shortChecksum = checksum.length >= 16 ? checksum.substring(0, 16) : checksum;
+    final shortChecksum = checksum.length >= 16
+        ? checksum.substring(0, 16)
+        : checksum;
     return 'CITYZENS:EXAM:$passId:$studentId:$courseCode:$deskNumber:$shortChecksum';
   }
 

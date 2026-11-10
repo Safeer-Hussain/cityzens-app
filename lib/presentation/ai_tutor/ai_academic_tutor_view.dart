@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'ai_tutor_provider.dart';
 
 class AiAcademicTutorView extends StatefulWidget {
@@ -49,13 +50,15 @@ class _AiAcademicTutorViewState extends State<AiAcademicTutorView> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Consumer<AiTutorProvider>(
       builder: (context, provider, _) {
         return Scaffold(
           backgroundColor: colors.surface,
-          resizeToAvoidBottomInset: true, // Essential: docks against software keyboard
+          resizeToAvoidBottomInset:
+              true, // Essential: docks against software keyboard
           floatingActionButton: FloatingActionButton.small(
             heroTag: 'fab_ai_tutor_clear', // Unique Hero Tag
             backgroundColor: colors.surfaceContainerHighest,
@@ -80,7 +83,8 @@ class _AiAcademicTutorViewState extends State<AiAcademicTutorView> {
     return Column(
       children: [
         _buildPromptChipsBar(provider, colors),
-        if (provider.transientStatus != null) _buildTransientIndicator(provider, colors),
+        if (provider.transientStatus != null)
+          _buildTransientIndicator(provider, colors),
         Expanded(
           child: ListView.builder(
             controller: _scrollController,
@@ -118,7 +122,11 @@ class _AiAcademicTutorViewState extends State<AiAcademicTutorView> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.psychology_rounded, color: colors.primary, size: 18),
+                      Icon(
+                        Icons.psychology_rounded,
+                        color: colors.primary,
+                        size: 18,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'AI Research Companion',
@@ -133,7 +141,10 @@ class _AiAcademicTutorViewState extends State<AiAcademicTutorView> {
                   const SizedBox(height: 6),
                   Text(
                     'Synchronized with live SQLite ledger for course attendance, active library records, and exam milestones.',
-                    style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11),
+                    style: TextStyle(
+                      color: colors.onSurfaceVariant,
+                      fontSize: 11,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Text(
@@ -151,9 +162,14 @@ class _AiAcademicTutorViewState extends State<AiAcademicTutorView> {
                       padding: const EdgeInsets.only(bottom: 6),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
-                        onTap: provider.isStreaming ? null : () => _sendMessage(prompt, provider),
+                        onTap: provider.isStreaming
+                            ? null
+                            : () => _sendMessage(prompt, provider),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
                             color: colors.surfaceContainer,
                             borderRadius: BorderRadius.circular(8),
@@ -181,15 +197,23 @@ class _AiAcademicTutorViewState extends State<AiAcademicTutorView> {
           flex: 6,
           child: Column(
             children: [
-              if (provider.transientStatus != null) _buildTransientIndicator(provider, colors),
+              if (provider.transientStatus != null)
+                _buildTransientIndicator(provider, colors),
               Expanded(
                 child: ListView.builder(
                   controller: _scrollController,
-                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   itemCount: provider.messages.length,
                   itemBuilder: (context, index) {
-                    return _buildMessageBubble(provider.messages[index], colors);
+                    return _buildMessageBubble(
+                      provider.messages[index],
+                      colors,
+                    );
                   },
                 ),
               ),
@@ -230,7 +254,9 @@ class _AiAcademicTutorViewState extends State<AiAcademicTutorView> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                onPressed: provider.isStreaming ? null : () => _sendMessage(prompt, provider),
+                onPressed: provider.isStreaming
+                    ? null
+                    : () => _sendMessage(prompt, provider),
               ),
             );
           }).toList(),
@@ -239,7 +265,10 @@ class _AiAcademicTutorViewState extends State<AiAcademicTutorView> {
     );
   }
 
-  Widget _buildTransientIndicator(AiTutorProvider provider, ColorScheme colors) {
+  Widget _buildTransientIndicator(
+    AiTutorProvider provider,
+    ColorScheme colors,
+  ) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -249,7 +278,10 @@ class _AiAcademicTutorViewState extends State<AiAcademicTutorView> {
           SizedBox(
             width: 14,
             height: 14,
-            child: CircularProgressIndicator(strokeWidth: 2, color: colors.primary),
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: colors.primary,
+            ),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -306,7 +338,9 @@ class _AiAcademicTutorViewState extends State<AiAcademicTutorView> {
                 Text(
                   isUser ? 'Safeer Hussain' : 'Cityzens AI Tutor',
                   style: TextStyle(
-                    color: isUser ? colors.onPrimary.withValues(alpha: 0.8) : colors.primary,
+                    color: isUser
+                        ? colors.onPrimary.withValues(alpha: 0.8)
+                        : colors.primary,
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                   ),
@@ -327,7 +361,10 @@ class _AiAcademicTutorViewState extends State<AiAcademicTutorView> {
               SizedBox(
                 width: 10,
                 height: 10,
-                child: CircularProgressIndicator(strokeWidth: 1.5, color: colors.secondary),
+                child: CircularProgressIndicator(
+                  strokeWidth: 1.5,
+                  color: colors.secondary,
+                ),
               ),
             ],
           ],
@@ -356,10 +393,16 @@ class _AiAcademicTutorViewState extends State<AiAcademicTutorView> {
                 onSubmitted: (val) => _sendMessage(val, provider),
                 decoration: InputDecoration(
                   hintText: 'Ask academic inquiry or research question...',
-                  hintStyle: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
+                  hintStyle: TextStyle(
+                    color: colors.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
                   filled: true,
                   fillColor: colors.surfaceContainer,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
                     borderSide: BorderSide(color: colors.outlineVariant),

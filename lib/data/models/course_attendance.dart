@@ -28,7 +28,9 @@ class CourseModel {
   double get attendancePercentage {
     if (totalClasses == 0) return 100.0;
     final effectivePresent = presentCount + (excusedCount * 0.5);
-    return double.parse(((effectivePresent / totalClasses) * 100).toStringAsFixed(1));
+    return double.parse(
+      ((effectivePresent / totalClasses) * 100).toStringAsFixed(1),
+    );
   }
 
   bool get isAtRisk => attendancePercentage < minRequiredPercentage;
@@ -38,7 +40,10 @@ class CourseModel {
     // target = (P + x) / (T + x) => x = (target * T - P) / (1 - target)
     final targetFraction = targetPercent / 100.0;
     if (targetFraction >= 1.0) return 999;
-    final needed = ((targetFraction * totalClasses - presentCount) / (1.0 - targetFraction)).ceil();
+    final needed =
+        ((targetFraction * totalClasses - presentCount) /
+                (1.0 - targetFraction))
+            .ceil();
     return needed > 0 ? needed : 0;
   }
 
@@ -66,7 +71,8 @@ class CourseModel {
       absentCount: absentCount ?? this.absentCount,
       excusedCount: excusedCount ?? this.excusedCount,
       totalClasses: totalClasses ?? this.totalClasses,
-      minRequiredPercentage: minRequiredPercentage ?? this.minRequiredPercentage,
+      minRequiredPercentage:
+          minRequiredPercentage ?? this.minRequiredPercentage,
     );
   }
 

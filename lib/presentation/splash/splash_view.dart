@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/database/app_database.dart';
 import '../../core/di/service_locator.dart';
 import '../attendance/attendance_provider.dart';
@@ -36,9 +37,10 @@ class _SplashViewState extends State<SplashView>
       CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic),
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animController, curve: Curves.easeIn),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _animController, curve: Curves.easeIn));
 
     _animController.forward();
 
@@ -79,16 +81,31 @@ class _SplashViewState extends State<SplashView>
         _statusText = 'Mounting native camera & QR optical bridge...';
       });
 
-      final scannerProvider = Provider.of<ScannerProvider>(context, listen: false);
+      final scannerProvider = Provider.of<ScannerProvider>(
+        context,
+        listen: false,
+      );
       await scannerProvider.initializeCamera();
 
       if (!mounted) return;
 
       // 4. Load Initial Data into Providers
-      final attendanceProvider = Provider.of<AttendanceProvider>(context, listen: false);
-      final libraryProvider = Provider.of<LibraryProvider>(context, listen: false);
-      final campusFeedProvider = Provider.of<CampusFeedProvider>(context, listen: false);
-      final gpaProvider = Provider.of<GpaCalculatorProvider>(context, listen: false);
+      final attendanceProvider = Provider.of<AttendanceProvider>(
+        context,
+        listen: false,
+      );
+      final libraryProvider = Provider.of<LibraryProvider>(
+        context,
+        listen: false,
+      );
+      final campusFeedProvider = Provider.of<CampusFeedProvider>(
+        context,
+        listen: false,
+      );
+      final gpaProvider = Provider.of<GpaCalculatorProvider>(
+        context,
+        listen: false,
+      );
       final examProvider = Provider.of<ExamProvider>(context, listen: false);
 
       await Future.wait([

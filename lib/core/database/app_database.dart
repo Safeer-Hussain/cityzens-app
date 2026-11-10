@@ -1,6 +1,8 @@
 import 'dart:convert';
+
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
+
 import '../utils/exam_cryptography.dart';
 
 class AppDatabase {
@@ -67,16 +69,20 @@ class AppDatabase {
       )
     ''');
 
-    final transcriptCount = Sqflite.firstIntValue(
-      await _db!.rawQuery('SELECT COUNT(*) FROM academic_transcripts'),
-    ) ?? 0;
+    final transcriptCount =
+        Sqflite.firstIntValue(
+          await _db!.rawQuery('SELECT COUNT(*) FROM academic_transcripts'),
+        ) ??
+        0;
     if (transcriptCount == 0) {
       await _seedTranscripts(_db!);
     }
 
-    final passCount = Sqflite.firstIntValue(
-      await _db!.rawQuery('SELECT COUNT(*) FROM exam_hall_passes'),
-    ) ?? 0;
+    final passCount =
+        Sqflite.firstIntValue(
+          await _db!.rawQuery('SELECT COUNT(*) FROM exam_hall_passes'),
+        ) ??
+        0;
     if (passCount == 0) {
       await _seedExamPasses(_db!);
     }
@@ -294,7 +300,9 @@ class AppDatabase {
         'id': 'att_01',
         'course_id': 'crs_01',
         'course_code': 'CS-401',
-        'timestamp': now.subtract(const Duration(days: 1)).millisecondsSinceEpoch,
+        'timestamp': now
+            .subtract(const Duration(days: 1))
+            .millisecondsSinceEpoch,
         'status': 'present',
         'verification_method': 'native_qr',
         'notes': 'Verified optical QR token scan at Turing Hall entrance.',
@@ -303,7 +311,9 @@ class AppDatabase {
         'id': 'att_02',
         'course_id': 'crs_02',
         'course_code': 'CS-405',
-        'timestamp': now.subtract(const Duration(days: 2)).millisecondsSinceEpoch,
+        'timestamp': now
+            .subtract(const Duration(days: 2))
+            .millisecondsSinceEpoch,
         'status': 'present',
         'verification_method': 'native_qr',
         'notes': 'Verified optical QR token scan at Hopper Auditorium.',
@@ -312,7 +322,9 @@ class AppDatabase {
         'id': 'att_03',
         'course_id': 'crs_03',
         'course_code': 'AI-410',
-        'timestamp': now.subtract(const Duration(days: 3)).millisecondsSinceEpoch,
+        'timestamp': now
+            .subtract(const Duration(days: 3))
+            .millisecondsSinceEpoch,
         'status': 'absent',
         'verification_method': 'unverified',
         'notes': 'Missed lecture - AI laboratory session.',
@@ -321,7 +333,9 @@ class AppDatabase {
         'id': 'att_04',
         'course_id': 'crs_04',
         'course_code': 'SE-420',
-        'timestamp': now.subtract(const Duration(days: 5)).millisecondsSinceEpoch,
+        'timestamp': now
+            .subtract(const Duration(days: 5))
+            .millisecondsSinceEpoch,
         'status': 'present',
         'verification_method': 'manual_pin',
         'notes': 'Faculty override PIN validation (Pin: 892014).',
@@ -330,7 +344,9 @@ class AppDatabase {
         'id': 'att_05',
         'course_id': 'crs_05',
         'course_code': 'SEC-430',
-        'timestamp': now.subtract(const Duration(days: 7)).millisecondsSinceEpoch,
+        'timestamp': now
+            .subtract(const Duration(days: 7))
+            .millisecondsSinceEpoch,
         'status': 'excused',
         'verification_method': 'leave_request',
         'notes': 'Dean sanctioned medical leave request #LR-9921.',
@@ -353,7 +369,9 @@ class AppDatabase {
         'id': 'loan_01',
         'book_id': 'book_01',
         'borrower_id': 'CTZ-2026-8842',
-        'borrow_date': now.subtract(const Duration(days: 10)).millisecondsSinceEpoch,
+        'borrow_date': now
+            .subtract(const Duration(days: 10))
+            .millisecondsSinceEpoch,
         'due_date': now.add(const Duration(days: 4)).millisecondsSinceEpoch,
         'is_returned': 0,
         'renewal_count': 0,
@@ -363,8 +381,12 @@ class AppDatabase {
         'id': 'loan_02',
         'book_id': 'book_02',
         'borrower_id': 'CTZ-2026-8842',
-        'borrow_date': now.subtract(const Duration(days: 18)).millisecondsSinceEpoch,
-        'due_date': now.subtract(const Duration(days: 2)).millisecondsSinceEpoch,
+        'borrow_date': now
+            .subtract(const Duration(days: 18))
+            .millisecondsSinceEpoch,
+        'due_date': now
+            .subtract(const Duration(days: 2))
+            .millisecondsSinceEpoch,
         'is_returned': 0,
         'renewal_count': 1,
         'overdue_fine': 1.0, // 2 days * $0.50
@@ -373,7 +395,9 @@ class AppDatabase {
         'id': 'loan_03',
         'book_id': 'book_03',
         'borrower_id': 'CTZ-2026-8842',
-        'borrow_date': now.subtract(const Duration(days: 6)).millisecondsSinceEpoch,
+        'borrow_date': now
+            .subtract(const Duration(days: 6))
+            .millisecondsSinceEpoch,
         'due_date': now.add(const Duration(days: 8)).millisecondsSinceEpoch,
         'is_returned': 0,
         'renewal_count': 0,
@@ -395,7 +419,9 @@ class AppDatabase {
         'title': 'Distributed Consensus Workshop: Raft vs Paxos in Production',
         'content': 'We are hosting a high-throughput systems workshop this Thursday at 14:00 in Alan Turing Hall 302. Bring your laptops configured with Go and Docker. All registered seniors are welcome.',
         'category': 'Faculty Announcement',
-        'timestamp': now.subtract(const Duration(hours: 3)).millisecondsSinceEpoch,
+        'timestamp': now
+            .subtract(const Duration(hours: 3))
+            .millisecondsSinceEpoch,
         'likes_count': 42,
         'is_liked': 1,
         'comments_count': 3,
@@ -406,10 +432,13 @@ class AppDatabase {
         'author_name': 'Prof. Evelyn Vance',
         'author_role': 'Head of Mobile Architectures Lab',
         'author_avatar': 'EV',
-        'title': 'Undergraduate Research Assistantship: Next-Gen Native Runtimes',
+        'title':
+            'Undergraduate Research Assistantship: Next-Gen Native Runtimes',
         'content': 'Our lab has two funded openings for research assistants specializing in Dart compiler internals, Skia/Impeller rendering pipeline optimizations, and zero-cost native bridges. Submit portfolios via the departmental portal.',
         'category': 'Research Group',
-        'timestamp': now.subtract(const Duration(hours: 9)).millisecondsSinceEpoch,
+        'timestamp': now
+            .subtract(const Duration(hours: 9))
+            .millisecondsSinceEpoch,
         'likes_count': 67,
         'is_liked': 0,
         'comments_count': 2,
@@ -423,7 +452,9 @@ class AppDatabase {
         'title': 'Offline-First Smart Campus Architecture Whitepaper Released',
         'content': 'Published comprehensive architecture blueprints demonstrating a 15.4% boost in screen load times and 25.1% UI frame render boost using local SQLite caching, MethodChannel optical sensors, and reactive MVVM providers. Benchmarks verified on Android SDK 36.',
         'category': 'Campus Event',
-        'timestamp': now.subtract(const Duration(days: 1)).millisecondsSinceEpoch,
+        'timestamp': now
+            .subtract(const Duration(days: 1))
+            .millisecondsSinceEpoch,
         'likes_count': 114,
         'is_liked': 1,
         'comments_count': 4,
@@ -434,10 +465,13 @@ class AppDatabase {
         'author_name': 'Library Services Directorate',
         'author_role': 'University Library Administration',
         'author_avatar': 'LB',
-        'title': '24/7 Silent Study Wing & Digital Repository Upgrade Completed',
+        'title':
+            '24/7 Silent Study Wing & Digital Repository Upgrade Completed',
         'content': 'Floor 3 and the Turing Reference Hall are now open 24/7 with RFID optical self-checkout kiosks. Over 40 new reference volumes on AI Agents and Cloud Native Security have been cataloged.',
         'category': 'Lab Access',
-        'timestamp': now.subtract(const Duration(days: 2)).millisecondsSinceEpoch,
+        'timestamp': now
+            .subtract(const Duration(days: 2))
+            .millisecondsSinceEpoch,
         'likes_count': 58,
         'is_liked': 0,
         'comments_count': 1,
@@ -455,8 +489,11 @@ class AppDatabase {
         'post_id': 'post_01',
         'author_name': 'Safeer Hussain',
         'author_role': 'Senior Student / Architect',
-        'content': 'Looking forward to the Raft state machine partition benchmarks.',
-        'timestamp': now.subtract(const Duration(hours: 2)).millisecondsSinceEpoch,
+        'content':
+            'Looking forward to the Raft state machine partition benchmarks.',
+        'timestamp': now
+            .subtract(const Duration(hours: 2))
+            .millisecondsSinceEpoch,
       },
       {
         'id': 'comm_02',
@@ -464,7 +501,9 @@ class AppDatabase {
         'author_name': 'Maya Lin',
         'author_role': 'Graduate Researcher',
         'content': 'Will the cluster nodes be deployed across local Raspberry Pi clusters or AWS nodes?',
-        'timestamp': now.subtract(const Duration(hours: 1)).millisecondsSinceEpoch,
+        'timestamp': now
+            .subtract(const Duration(hours: 1))
+            .millisecondsSinceEpoch,
       },
       {
         'id': 'comm_03',
@@ -472,7 +511,9 @@ class AppDatabase {
         'author_name': 'Dr. Aris Thorne',
         'author_role': 'Faculty',
         'content': 'Exceptional benchmarking methodology, Safeer. The memory footprint stays under 60MB.',
-        'timestamp': now.subtract(const Duration(hours: 18)).millisecondsSinceEpoch,
+        'timestamp': now
+            .subtract(const Duration(hours: 18))
+            .millisecondsSinceEpoch,
       },
     ];
 
@@ -486,17 +527,56 @@ class AppDatabase {
 
   static Future<void> _seedTranscripts(Database db) async {
     final transcripts = [
-      {'id': 'sem_01', 'semester_name': 'Semester 1 (Fall 2023)', 'credit_hours': 17, 'gpa': 3.92},
-      {'id': 'sem_02', 'semester_name': 'Semester 2 (Spring 2024)', 'credit_hours': 18, 'gpa': 3.95},
-      {'id': 'sem_03', 'semester_name': 'Semester 3 (Fall 2024)', 'credit_hours': 17, 'gpa': 3.90},
-      {'id': 'sem_04', 'semester_name': 'Semester 4 (Spring 2025)', 'credit_hours': 18, 'gpa': 3.96},
-      {'id': 'sem_05', 'semester_name': 'Semester 5 (Fall 2025)', 'credit_hours': 16, 'gpa': 3.94},
-      {'id': 'sem_06', 'semester_name': 'Semester 6 (Spring 2026)', 'credit_hours': 16, 'gpa': 3.98},
-      {'id': 'sem_07', 'semester_name': 'Semester 7 (Fall 2026)', 'credit_hours': 16, 'gpa': 3.92},
+      {
+        'id': 'sem_01',
+        'semester_name': 'Semester 1 (Fall 2023)',
+        'credit_hours': 17,
+        'gpa': 3.92,
+      },
+      {
+        'id': 'sem_02',
+        'semester_name': 'Semester 2 (Spring 2024)',
+        'credit_hours': 18,
+        'gpa': 3.95,
+      },
+      {
+        'id': 'sem_03',
+        'semester_name': 'Semester 3 (Fall 2024)',
+        'credit_hours': 17,
+        'gpa': 3.90,
+      },
+      {
+        'id': 'sem_04',
+        'semester_name': 'Semester 4 (Spring 2025)',
+        'credit_hours': 18,
+        'gpa': 3.96,
+      },
+      {
+        'id': 'sem_05',
+        'semester_name': 'Semester 5 (Fall 2025)',
+        'credit_hours': 16,
+        'gpa': 3.94,
+      },
+      {
+        'id': 'sem_06',
+        'semester_name': 'Semester 6 (Spring 2026)',
+        'credit_hours': 16,
+        'gpa': 3.98,
+      },
+      {
+        'id': 'sem_07',
+        'semester_name': 'Semester 7 (Fall 2026)',
+        'credit_hours': 16,
+        'gpa': 3.92,
+      },
     ];
 
     for (final t in transcripts) {
-      await db.insert('academic_transcripts', t, conflictAlgorithm: ConflictAlgorithm.replace);
+      await db.insert(
+        'academic_transcripts',
+        t,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
     }
   }
 
@@ -505,7 +585,8 @@ class AppDatabase {
       {
         'id': 'book_01',
         'isbn': '978-0134494166',
-        'title': "Clean Architecture: A Craftsman's Guide to Software Structure",
+        'title':
+            "Clean Architecture: A Craftsman's Guide to Software Structure",
         'author': 'Robert C. Martin',
         'category': 'Software Engineering',
         'shelf_location': 'FLOOR-2 / AISLE-A / BAY-01',
@@ -778,11 +859,13 @@ class AppDatabase {
         'title': title,
         'author': 'Academic Fellow & Research Faculty',
         'category': category,
-        'shelf_location': 'FLOOR-${(i % 3) + 1} / AISLE-${String.fromCharCode(65 + (i % 5))} / BAY-${(i % 12) + 1}',
+        'shelf_location':
+            'FLOOR-${(i % 3) + 1} / AISLE-${String.fromCharCode(65 + (i % 5))} / BAY-${(i % 12) + 1}',
         'total_copies': copies,
         'available_copies': avail,
         'is_reserved': (i % 7 == 0) ? 1 : 0,
-        'abstract': 'A peer-reviewed academic resource exploring $title with state-of-the-art methodology, benchmark analysis, and rigorous computational verification.',
+        'abstract':
+            'A peer-reviewed academic resource exploring $title with state-of-the-art methodology, benchmark analysis, and rigorous computational verification.',
         'table_of_contents': jsonEncode([
           'Chapter 1: Foundational Principles & Problem Formulation',
           'Chapter 2: Architectural Taxonomy & Core Abstractions',
@@ -792,10 +875,10 @@ class AppDatabase {
         'cover_asset': category == 'AI & ML'
             ? 'assets/images/book_applied_ai.png'
             : category == 'Cloud & Security'
-                ? 'assets/images/book_distributed_databases.png'
-                : category == 'Systems & Architecture'
-                    ? 'assets/images/book_mobile_systems.png'
-                    : 'assets/images/book_clean_architecture.png',
+            ? 'assets/images/book_distributed_databases.png'
+            : category == 'Systems & Architecture'
+            ? 'assets/images/book_mobile_systems.png'
+            : 'assets/images/book_clean_architecture.png',
       });
     }
 

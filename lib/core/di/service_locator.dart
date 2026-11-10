@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../database/app_database.dart';
 import '../network/api_client.dart';
 import '../services/connectivity_service.dart';
@@ -43,9 +44,7 @@ Future<void> setupServiceLocator({
     AttendanceRepository(database: db),
   );
 
-  sl.registerSingleton<LibraryRepository>(
-    LibraryRepository(database: db),
-  );
+  sl.registerSingleton<LibraryRepository>(LibraryRepository(database: db));
 
   sl.registerSingleton<CampusFeedRepository>(
     CampusFeedRepository(database: db),
@@ -59,7 +58,5 @@ Future<void> setupServiceLocator({
     TranscriptRepository(database: db),
   );
 
-  sl.registerSingleton<ExamRepository>(
-    ExamRepository(database: db),
-  );
+  sl.registerSingleton<ExamRepository>(ExamRepository(database: db));
 }

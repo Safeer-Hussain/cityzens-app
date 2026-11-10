@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 
@@ -29,10 +30,12 @@ class ConnectivityService extends ChangeNotifier {
   }
 
   void _updateStatus(List<ConnectivityResult> results) {
-    final hasConnection = results.any((r) =>
-        r == ConnectivityResult.mobile ||
-        r == ConnectivityResult.wifi ||
-        r == ConnectivityResult.ethernet);
+    final hasConnection = results.any(
+      (r) =>
+          r == ConnectivityResult.mobile ||
+          r == ConnectivityResult.wifi ||
+          r == ConnectivityResult.ethernet,
+    );
     if (_isDeviceOnline != hasConnection) {
       _isDeviceOnline = hasConnection;
       notifyListeners();

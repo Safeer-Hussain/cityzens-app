@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/services/connectivity_service.dart';
 import '../../core/services/telemetry_service.dart';
 import '../../core/theme/theme_provider.dart';
@@ -37,10 +38,7 @@ class RecruiterDebugDrawer extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               'Real-Time Engineering Metrics & Network Simulation',
-              style: TextStyle(
-                color: colors.onSurfaceVariant,
-                fontSize: 11,
-              ),
+              style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11),
             ),
             const SizedBox(height: 16),
             Divider(color: colors.outlineVariant),
@@ -59,7 +57,11 @@ class RecruiterDebugDrawer extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.speed_rounded, color: colors.secondary, size: 18),
+                      Icon(
+                        Icons.speed_rounded,
+                        color: colors.secondary,
+                        size: 18,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'Architecture Telemetry',
@@ -166,7 +168,10 @@ class RecruiterDebugDrawer extends StatelessWidget {
                     ),
                     subtitle: Text(
                       'Injects temporary campus gateway failure',
-                      style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11),
+                      style: TextStyle(
+                        color: colors.onSurfaceVariant,
+                        fontSize: 11,
+                      ),
                     ),
                     value: telemetry.simulateHttp503Once,
                     activeThumbColor: colors.error,
@@ -183,7 +188,10 @@ class RecruiterDebugDrawer extends StatelessWidget {
                     ),
                     subtitle: Text(
                       'Tests local SQLite persistence fallback banner',
-                      style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11),
+                      style: TextStyle(
+                        color: colors.onSurfaceVariant,
+                        fontSize: 11,
+                      ),
                     ),
                     value: connectivity.isForceOfflineDebug,
                     activeThumbColor: colors.primary,
@@ -237,7 +245,10 @@ class RecruiterDebugDrawer extends StatelessWidget {
                     children: [
                       Text(
                         'Android SDK Target',
-                        style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12),
+                        style: TextStyle(
+                          color: colors.onSurfaceVariant,
+                          fontSize: 12,
+                        ),
                       ),
                       Text(
                         'SDK 36 (Android 16)',
@@ -255,7 +266,10 @@ class RecruiterDebugDrawer extends StatelessWidget {
                     children: [
                       Text(
                         'MediaTek / Impeller Safe',
-                        style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12),
+                        style: TextStyle(
+                          color: colors.onSurfaceVariant,
+                          fontSize: 12,
+                        ),
                       ),
                       Text(
                         'Vulkan Fallback Active',
@@ -300,10 +314,7 @@ class RecruiterDebugDrawer extends StatelessWidget {
             ),
             Text(
               subtext,
-              style: TextStyle(
-                color: colors.onSurfaceVariant,
-                fontSize: 10,
-              ),
+              style: TextStyle(color: colors.onSurfaceVariant, fontSize: 10),
             ),
           ],
         ),

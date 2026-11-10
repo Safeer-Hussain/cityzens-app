@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/utils/app_feedback.dart';
 import '../../data/models/campus_post.dart';
 import 'campus_feed_provider.dart';
@@ -22,7 +23,8 @@ class CampusFeedView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Consumer<CampusFeedProvider>(
       builder: (context, provider, _) {
@@ -74,7 +76,9 @@ class CampusFeedView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          ...provider.posts.map((post) => _buildPostCard(context, post, provider, colors)),
+          ...provider.posts.map(
+            (post) => _buildPostCard(context, post, provider, colors),
+          ),
           const SizedBox(height: 80),
         ],
       ),
@@ -123,7 +127,9 @@ class CampusFeedView extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                ...provider.posts.map((post) => _buildPostCard(context, post, provider, colors)),
+                ...provider.posts.map(
+                  (post) => _buildPostCard(context, post, provider, colors),
+                ),
                 const SizedBox(height: 60),
               ],
             ),
@@ -133,7 +139,10 @@ class CampusFeedView extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryFilters(CampusFeedProvider provider, ColorScheme colors) {
+  Widget _buildCategoryFilters(
+    CampusFeedProvider provider,
+    ColorScheme colors,
+  ) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
@@ -269,19 +278,28 @@ class CampusFeedView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(6),
                 onTap: () => provider.toggleLike(post.id),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   child: Row(
                     children: [
                       Icon(
-                        post.isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                        post.isLiked
+                            ? Icons.favorite_rounded
+                            : Icons.favorite_border_rounded,
                         size: 18,
-                        color: post.isLiked ? colors.error : colors.onSurfaceVariant,
+                        color: post.isLiked
+                            ? colors.error
+                            : colors.onSurfaceVariant,
                       ),
                       const SizedBox(width: 6),
                       Text(
                         '${post.likesCount}',
                         style: TextStyle(
-                          color: post.isLiked ? colors.error : colors.onSurfaceVariant,
+                          color: post.isLiked
+                              ? colors.error
+                              : colors.onSurfaceVariant,
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
                         ),
@@ -295,10 +313,17 @@ class CampusFeedView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(6),
                 onTap: () => _showCommentsSheet(context, post, provider),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   child: Row(
                     children: [
-                      Icon(Icons.chat_bubble_outline_rounded, size: 18, color: colors.onSurfaceVariant),
+                      Icon(
+                        Icons.chat_bubble_outline_rounded,
+                        size: 18,
+                        color: colors.onSurfaceVariant,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         '${post.commentsCount}',
@@ -317,9 +342,13 @@ class CampusFeedView extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
                 icon: Icon(
-                  post.isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                  post.isBookmarked
+                      ? Icons.bookmark_rounded
+                      : Icons.bookmark_border_rounded,
                   size: 18,
-                  color: post.isBookmarked ? colors.primary : colors.onSurfaceVariant,
+                  color: post.isBookmarked
+                      ? colors.primary
+                      : colors.onSurfaceVariant,
                 ),
                 onPressed: () => provider.toggleBookmark(post.id),
               ),
@@ -327,7 +356,11 @@ class CampusFeedView extends StatelessWidget {
               IconButton(
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
-                icon: Icon(Icons.share_outlined, size: 18, color: colors.onSurfaceVariant),
+                icon: Icon(
+                  Icons.share_outlined,
+                  size: 18,
+                  color: colors.onSurfaceVariant,
+                ),
                 onPressed: () => _showShareSheet(context, post),
               ),
             ],
@@ -398,7 +431,10 @@ class CampusFeedView extends StatelessWidget {
                         child: Center(
                           child: Text(
                             'No comments yet. Be the first to share an academic insight.',
-                            style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12),
+                            style: TextStyle(
+                              color: colors.onSurfaceVariant,
+                              fontSize: 12,
+                            ),
                           ),
                         ),
                       )
@@ -407,7 +443,8 @@ class CampusFeedView extends StatelessWidget {
                         child: ListView.separated(
                           shrinkWrap: true,
                           itemCount: comments.length,
-                          separatorBuilder: (_, _) => Divider(color: colors.outlineVariant),
+                          separatorBuilder: (_, _) =>
+                              Divider(color: colors.outlineVariant),
                           itemBuilder: (context, idx) {
                             final comm = comments[idx];
                             return Padding(
@@ -416,7 +453,8 @@ class CampusFeedView extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         comm.authorName,
@@ -428,14 +466,20 @@ class CampusFeedView extends StatelessWidget {
                                       ),
                                       Text(
                                         comm.authorRole,
-                                        style: TextStyle(color: colors.onSurfaceVariant, fontSize: 10),
+                                        style: TextStyle(
+                                          color: colors.onSurfaceVariant,
+                                          fontSize: 10,
+                                        ),
                                       ),
                                     ],
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
                                     comm.content,
-                                    style: TextStyle(color: colors.onSurface, fontSize: 12),
+                                    style: TextStyle(
+                                      color: colors.onSurface,
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -451,13 +495,21 @@ class CampusFeedView extends StatelessWidget {
                             controller: commentController,
                             decoration: InputDecoration(
                               hintText: 'Write a verified response...',
-                              hintStyle: TextStyle(color: colors.onSurfaceVariant, fontSize: 12),
+                              hintStyle: TextStyle(
+                                color: colors.onSurfaceVariant,
+                                fontSize: 12,
+                              ),
                               filled: true,
                               fillColor: colors.surfaceContainer,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 8,
+                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(color: colors.outlineVariant),
+                                borderSide: BorderSide(
+                                  color: colors.outlineVariant,
+                                ),
                               ),
                             ),
                           ),
@@ -478,7 +530,10 @@ class CampusFeedView extends StatelessWidget {
                               content: text,
                             );
                             if (context.mounted) {
-                              AppFeedback.showSuccess(context, 'Comment posted to SQLite ledger.');
+                              AppFeedback.showSuccess(
+                                context,
+                                'Comment posted to SQLite ledger.',
+                              );
                             }
                           },
                         ),
@@ -533,20 +588,42 @@ class CampusFeedView extends StatelessWidget {
                 const SizedBox(height: 14),
                 ListTile(
                   leading: Icon(Icons.copy_rounded, color: colors.primary),
-                  title: Text('Copy Notice Content', style: TextStyle(color: colors.onSurface, fontSize: 13, fontWeight: FontWeight.w600)),
+                  title: Text(
+                    'Copy Notice Content',
+                    style: TextStyle(
+                      color: colors.onSurface,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   onTap: () {
-                    Clipboard.setData(ClipboardData(text: '${post.title}\n\n${post.content}'));
+                    Clipboard.setData(
+                      ClipboardData(text: '${post.title}\n\n${post.content}'),
+                    );
                     Navigator.of(sheetContext).pop();
-                    AppFeedback.showSuccess(context, 'Notice copied to device clipboard.');
+                    AppFeedback.showSuccess(
+                      context,
+                      'Notice copied to device clipboard.',
+                    );
                   },
                 ),
                 Divider(color: colors.outlineVariant),
                 ListTile(
                   leading: Icon(Icons.repeat_rounded, color: colors.secondary),
-                  title: Text('Repost to Campus Feed', style: TextStyle(color: colors.onSurface, fontSize: 13, fontWeight: FontWeight.w600)),
+                  title: Text(
+                    'Repost to Campus Feed',
+                    style: TextStyle(
+                      color: colors.onSurface,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   onTap: () {
                     Navigator.of(sheetContext).pop();
-                    AppFeedback.showSuccess(context, 'Reposted "${post.title}" to campus stream.');
+                    AppFeedback.showSuccess(
+                      context,
+                      'Reposted "${post.title}" to campus stream.',
+                    );
                   },
                 ),
               ],
@@ -557,7 +634,10 @@ class CampusFeedView extends StatelessWidget {
     );
   }
 
-  void _showPublishNoticeSheet(BuildContext context, CampusFeedProvider provider) {
+  void _showPublishNoticeSheet(
+    BuildContext context,
+    CampusFeedProvider provider,
+  ) {
     final colors = Theme.of(context).colorScheme;
     final titleController = TextEditingController();
     final contentController = TextEditingController();
@@ -611,13 +691,17 @@ class CampusFeedView extends StatelessWidget {
                         initialValue: selectedCat,
                         decoration: InputDecoration(
                           labelText: 'Category',
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                         items: _categories.where((c) => c != 'All').map((c) {
                           return DropdownMenuItem(value: c, child: Text(c));
                         }).toList(),
                         onChanged: (val) {
-                          if (val != null) setModalState(() => selectedCat = val);
+                          if (val != null) {
+                            setModalState(() => selectedCat = val);
+                          }
                         },
                       ),
                       const SizedBox(height: 12),
@@ -625,8 +709,11 @@ class CampusFeedView extends StatelessWidget {
                         controller: titleController,
                         decoration: InputDecoration(
                           labelText: 'Notice Title',
-                          hintText: 'e.g. Graduate Seminar on Zero-Knowledge Proofs',
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                          hintText:
+                              'e.g. Graduate Seminar on Zero-Knowledge Proofs',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -637,7 +724,9 @@ class CampusFeedView extends StatelessWidget {
                           labelText: 'Dispatch Content',
                           hintText: 'Detailed syllabus, venue requirements, or lab clearance details.',
                           errorText: errorText,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -646,14 +735,17 @@ class CampusFeedView extends StatelessWidget {
                           backgroundColor: colors.primary,
                           foregroundColor: colors.onPrimary,
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                         onPressed: () async {
                           final title = titleController.text.trim();
                           final content = contentController.text.trim();
                           if (title.length < 4 || content.length < 8) {
                             setModalState(() {
-                              errorText = 'Title min 4 chars, content min 8 chars';
+                              errorText =
+                                  'Title min 4 chars, content min 8 chars';
                             });
                             return;
                           }
@@ -675,7 +767,10 @@ class CampusFeedView extends StatelessWidget {
                             );
                           }
                         },
-                        child: const Text('Publish to Campus Feed', style: TextStyle(fontWeight: FontWeight.w700)),
+                        child: const Text(
+                          'Publish to Campus Feed',
+                          style: TextStyle(fontWeight: FontWeight.w700),
+                        ),
                       ),
                     ],
                   ),

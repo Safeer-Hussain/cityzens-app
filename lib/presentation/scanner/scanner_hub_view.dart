@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/utils/app_feedback.dart';
 import '../attendance/attendance_provider.dart';
 import '../library/library_provider.dart';
@@ -13,7 +14,8 @@ class ScannerHubView extends StatefulWidget {
   State<ScannerHubView> createState() => _ScannerHubViewState();
 }
 
-class _ScannerHubViewState extends State<ScannerHubView> with SingleTickerProviderStateMixin {
+class _ScannerHubViewState extends State<ScannerHubView>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _laserAnimController;
   late final Animation<double> _laserAnimation;
 
@@ -36,14 +38,15 @@ class _ScannerHubViewState extends State<ScannerHubView> with SingleTickerProvid
     super.dispose();
   }
 
-  Future<void> _handleOpticalScan(
-    ScannerProvider scannerProvider,
-  ) async {
+  Future<void> _handleOpticalScan(ScannerProvider scannerProvider) async {
     final payload = await scannerProvider.scanPayload();
     if (payload == null || !mounted) return;
 
     if (payload.type == 'attendance_qr') {
-      final attendanceProvider = Provider.of<AttendanceProvider>(context, listen: false);
+      final attendanceProvider = Provider.of<AttendanceProvider>(
+        context,
+        listen: false,
+      );
       final courseCode = payload.courseCode ?? 'CS-401';
       final success = await attendanceProvider.checkInWithQr(
         courseCode: courseCode,
@@ -57,7 +60,10 @@ class _ScannerHubViewState extends State<ScannerHubView> with SingleTickerProvid
         );
       }
     } else if (payload.type == 'library_isbn') {
-      final libraryProvider = Provider.of<LibraryProvider>(context, listen: false);
+      final libraryProvider = Provider.of<LibraryProvider>(
+        context,
+        listen: false,
+      );
       final isbn = payload.isbn ?? '978-0134494166';
       final book = await libraryProvider.repository.getBookByIsbn(isbn);
       if (!mounted) return;
@@ -69,7 +75,8 @@ class _ScannerHubViewState extends State<ScannerHubView> with SingleTickerProvid
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
-          builder: (_) => BookDetailSheet(book: book, provider: libraryProvider),
+          builder: (_) =>
+              BookDetailSheet(book: book, provider: libraryProvider),
         );
       }
     } else if (payload.type == 'student_id') {
@@ -84,7 +91,8 @@ class _ScannerHubViewState extends State<ScannerHubView> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Consumer<ScannerProvider>(
       builder: (context, provider, _) {
@@ -99,14 +107,19 @@ class _ScannerHubViewState extends State<ScannerHubView> with SingleTickerProvid
                 ? SizedBox(
                     width: 18,
                     height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: colors.onPrimary),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: colors.onPrimary,
+                    ),
                   )
                 : const Icon(Icons.camera_rounded, size: 20),
             label: Text(
               provider.isScanning ? 'Decoding...' : 'Capture & Verify',
               style: const TextStyle(fontWeight: FontWeight.w700),
             ),
-            onPressed: provider.isScanning ? null : () => _handleOpticalScan(provider),
+            onPressed: provider.isScanning
+                ? null
+                : () => _handleOpticalScan(provider),
           ),
           body: isLandscape
               ? _buildLandscapeLayout(context, provider, colors)
@@ -248,23 +261,44 @@ class _ScannerHubViewState extends State<ScannerHubView> with SingleTickerProvid
           // Optical background grid lines
           CustomPaint(
             size: Size.infinite,
-            painter: _OpticalGridPainter(gridColor: colors.outlineVariant.withValues(alpha: 0.35)),
+            painter: _OpticalGridPainter(
+              gridColor: colors.outlineVariant.withValues(alpha: 0.35),
+            ),
           ),
           // Viewfinder Target Frame with corner reticles
           Container(
             width: height * 0.75,
             height: height * 0.75,
             decoration: BoxDecoration(
-              border: Border.all(color: colors.primary.withValues(alpha: 0.8), width: 2),
+              border: Border.all(
+                color: colors.primary.withValues(alpha: 0.8),
+                width: 2,
+              ),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Stack(
               children: [
                 // Corner targeting reticles
-                Positioned(top: 0, left: 0, child: _buildCornerReticle(colors, 0)),
-                Positioned(top: 0, right: 0, child: _buildCornerReticle(colors, 90)),
-                Positioned(bottom: 0, right: 0, child: _buildCornerReticle(colors, 180)),
-                Positioned(bottom: 0, left: 0, child: _buildCornerReticle(colors, 270)),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  child: _buildCornerReticle(colors, 0),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: _buildCornerReticle(colors, 90),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: _buildCornerReticle(colors, 180),
+                ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  child: _buildCornerReticle(colors, 270),
+                ),
                 // Animated laser scan-line
                 AnimatedBuilder(
                   animation: _laserAnimation,
@@ -297,8 +331,8 @@ class _ScannerHubViewState extends State<ScannerHubView> with SingleTickerProvid
             provider.selectedMode == ScannerMode.attendanceQr
                 ? Icons.qr_code_2_rounded
                 : provider.selectedMode == ScannerMode.libraryIsbn
-                    ? Icons.barcode_reader
-                    : Icons.badge_outlined,
+                ? Icons.barcode_reader
+                : Icons.badge_outlined,
             size: 40,
             color: colors.primary.withValues(alpha: 0.2),
           ),
@@ -339,7 +373,10 @@ class _ScannerHubViewState extends State<ScannerHubView> with SingleTickerProvid
               Container(
                 width: 8,
                 height: 8,
-                decoration: BoxDecoration(color: colors.secondary, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  color: colors.secondary,
+                  shape: BoxShape.circle,
+                ),
               ),
               const SizedBox(width: 8),
               Column(
@@ -355,7 +392,10 @@ class _ScannerHubViewState extends State<ScannerHubView> with SingleTickerProvid
                   ),
                   Text(
                     '1080p @ ${fps}FPS  •  Hardware CRC Verification',
-                    style: TextStyle(color: colors.onSurfaceVariant, fontSize: 10),
+                    style: TextStyle(
+                      color: colors.onSurfaceVariant,
+                      fontSize: 10,
+                    ),
                   ),
                 ],
               ),
@@ -363,8 +403,12 @@ class _ScannerHubViewState extends State<ScannerHubView> with SingleTickerProvid
           ),
           IconButton(
             icon: Icon(
-              provider.isTorchOn ? Icons.flash_on_rounded : Icons.flash_off_rounded,
-              color: provider.isTorchOn ? colors.secondary : colors.onSurfaceVariant,
+              provider.isTorchOn
+                  ? Icons.flash_on_rounded
+                  : Icons.flash_off_rounded,
+              color: provider.isTorchOn
+                  ? colors.secondary
+                  : colors.onSurfaceVariant,
               size: 20,
             ),
             onPressed: () => provider.toggleTorch(),
@@ -374,7 +418,10 @@ class _ScannerHubViewState extends State<ScannerHubView> with SingleTickerProvid
     );
   }
 
-  Widget _buildScannedPayloadResult(ScannerProvider provider, ColorScheme colors) {
+  Widget _buildScannedPayloadResult(
+    ScannerProvider provider,
+    ColorScheme colors,
+  ) {
     final payload = provider.lastPayload;
     if (payload == null) {
       return Container(
@@ -414,7 +461,11 @@ class _ScannerHubViewState extends State<ScannerHubView> with SingleTickerProvid
             children: [
               Row(
                 children: [
-                  Icon(Icons.verified_rounded, color: colors.secondary, size: 18),
+                  Icon(
+                    Icons.verified_rounded,
+                    color: colors.secondary,
+                    size: 18,
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     'Verified Optical Payload',
@@ -446,17 +497,60 @@ class _ScannerHubViewState extends State<ScannerHubView> with SingleTickerProvid
           ),
           const SizedBox(height: 8),
           if (payload.type == 'attendance_qr') ...[
-            Text('Token: ${payload.code}', style: TextStyle(color: colors.primary, fontWeight: FontWeight.w700, fontSize: 12)),
-            Text('Course: ${payload.courseCode} - ${payload.courseTitle}', style: TextStyle(color: colors.onSurface, fontSize: 12)),
-            Text('Room: ${payload.room}', style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11)),
+            Text(
+              'Token: ${payload.code}',
+              style: TextStyle(
+                color: colors.primary,
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+              ),
+            ),
+            Text(
+              'Course: ${payload.courseCode} - ${payload.courseTitle}',
+              style: TextStyle(color: colors.onSurface, fontSize: 12),
+            ),
+            Text(
+              'Room: ${payload.room}',
+              style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11),
+            ),
           ] else if (payload.type == 'library_isbn') ...[
-            Text('ISBN-13: ${payload.isbn}', style: TextStyle(color: colors.primary, fontWeight: FontWeight.w700, fontSize: 12)),
-            Text('Title: ${payload.title}', style: TextStyle(color: colors.onSurface, fontSize: 12)),
-            Text('Author: ${payload.author}', style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11)),
+            Text(
+              'ISBN-13: ${payload.isbn}',
+              style: TextStyle(
+                color: colors.primary,
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+              ),
+            ),
+            Text(
+              'Title: ${payload.title}',
+              style: TextStyle(color: colors.onSurface, fontSize: 12),
+            ),
+            Text(
+              'Author: ${payload.author}',
+              style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11),
+            ),
           ] else ...[
-            Text('Student ID: ${payload.studentId}', style: TextStyle(color: colors.primary, fontWeight: FontWeight.w700, fontSize: 12)),
-            Text('Name: ${payload.name}', style: TextStyle(color: colors.onSurface, fontSize: 12)),
-            Text('Security Clearance: ${payload.clearance}', style: TextStyle(color: colors.secondary, fontSize: 11, fontWeight: FontWeight.w700)),
+            Text(
+              'Student ID: ${payload.studentId}',
+              style: TextStyle(
+                color: colors.primary,
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+              ),
+            ),
+            Text(
+              'Name: ${payload.name}',
+              style: TextStyle(color: colors.onSurface, fontSize: 12),
+            ),
+            Text(
+              'Security Clearance: ${payload.clearance}',
+              style: TextStyle(
+                color: colors.secondary,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ],
         ],
       ),

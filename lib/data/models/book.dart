@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import '../../core/utils/citation_generator.dart';
+
 class BookModel {
   final String id;
   final String isbn;
@@ -30,6 +32,12 @@ class BookModel {
   });
 
   bool get isAvailable => availableCopies > 0;
+
+  String get citationKey => CitationGenerator.generateCiteKey(this);
+  String get publisher => CitationGenerator.resolvePublisher(this);
+  int get publicationYear => CitationGenerator.resolveYear(this);
+  String getCitation(CitationStyle style) =>
+      CitationGenerator.format(this, style);
 
   BookModel copyWith({
     String? id,
@@ -106,7 +114,9 @@ class BookModel {
       isReserved: (map['is_reserved'] as num?) == 1,
       abstractText: (map['abstract'] ?? '') as String,
       tableOfContents: toc,
-      coverAsset: (map['cover_asset'] ?? 'assets/images/book_clean_architecture.png') as String,
+      coverAsset:
+          (map['cover_asset'] ?? 'assets/images/book_clean_architecture.png')
+              as String,
     );
   }
 }

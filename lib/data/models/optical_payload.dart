@@ -49,7 +49,9 @@ class OpticalPayload {
       role: map['role'] as String?,
       clearance: map['clearance'] as String?,
       checksum: map['checksum'] as String? ?? 'VERIFIED_CRC',
-      timestamp: (map['timestamp'] as num?)?.toInt() ?? DateTime.now().millisecondsSinceEpoch,
+      timestamp:
+          (map['timestamp'] as num?)?.toInt() ??
+          DateTime.now().millisecondsSinceEpoch,
     );
   }
 }

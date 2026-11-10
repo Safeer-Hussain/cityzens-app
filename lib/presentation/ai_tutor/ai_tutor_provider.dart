@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
+
 import '../../data/repositories/attendance_repository.dart';
 import '../../data/repositories/library_repository.dart';
 
@@ -147,7 +149,9 @@ class AiTutorProvider extends ChangeNotifier {
   }) {
     final lower = prompt.toLowerCase();
 
-    if (lower.contains('attendance') || lower.contains('risk') || lower.contains('classes')) {
+    if (lower.contains('attendance') ||
+        lower.contains('risk') ||
+        lower.contains('classes')) {
       final buffer = StringBuffer();
       buffer.writeln('Academic Attendance Audit (Synced with SQLite Ledger):');
       buffer.writeln('');
@@ -160,16 +164,23 @@ class AiTutorProvider extends ChangeNotifier {
         );
       }
       buffer.writeln('');
-      buffer.writeln('Strategic Recommendation: Maintain attendance in AI-410 to comfortably surpass the 75.0% university accreditation threshold before end-semester exam registration.');
+      buffer.writeln(
+        'Strategic Recommendation: Maintain attendance in AI-410 to comfortably surpass the 75.0% university accreditation threshold before end-semester exam registration.',
+      );
       return buffer.toString();
     }
 
-    if (lower.contains('summarize') || lower.contains('borrowed') || lower.contains('library') || lower.contains('book')) {
+    if (lower.contains('summarize') ||
+        lower.contains('borrowed') ||
+        lower.contains('library') ||
+        lower.contains('book')) {
       final buffer = StringBuffer();
       buffer.writeln('Active Digital Library Loans & Due Date Audit:');
       buffer.writeln('');
       if (loans.isEmpty) {
-        buffer.writeln('You currently have zero active book loans in the university ledger.');
+        buffer.writeln(
+          'You currently have zero active book loans in the university ledger.',
+        );
       } else {
         for (final item in loans) {
           final days = item.loan.daysRemaining;
@@ -181,11 +192,15 @@ class AiTutorProvider extends ChangeNotifier {
         }
       }
       buffer.writeln('');
-      buffer.writeln('1-Tap Renewal Notice: You can renew active loans for an additional 14 days directly from the Library Records tab with zero penalty.');
+      buffer.writeln(
+        '1-Tap Renewal Notice: You can renew active loans for an additional 14 days directly from the Library Records tab with zero penalty.',
+      );
       return buffer.toString();
     }
 
-    if (lower.contains('revision') || lower.contains('schedule') || lower.contains('exam')) {
+    if (lower.contains('revision') ||
+        lower.contains('schedule') ||
+        lower.contains('exam')) {
       return '''Recommended 7-Day High-Throughput Exam Revision Plan:
 
 Day 1-2 (Distributed Systems & Cloud Computing):
@@ -206,7 +221,9 @@ Day 7 (Mock Assessment & Rest):
 * 3-hour timed practice paper on Distributed Databases followed by cognitive recharge.''';
     }
 
-    if (lower.contains('proposal') || lower.contains('faculty') || lower.contains('project')) {
+    if (lower.contains('proposal') ||
+        lower.contains('faculty') ||
+        lower.contains('project')) {
       return '''Faculty Research Project Proposal Draft:
 
 Title: Zero-Latency Edge Telemetry & Offline-First Biomolecular Verification in Campus Mobile Systems

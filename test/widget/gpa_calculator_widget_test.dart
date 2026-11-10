@@ -6,6 +6,7 @@ import 'package:cityzens_app/core/theme/theme_provider.dart';
 import 'package:cityzens_app/data/repositories/transcript_repository.dart';
 import 'package:cityzens_app/presentation/gpa_calculator/gpa_calculator_provider.dart';
 import 'package:cityzens_app/presentation/gpa_calculator/gpa_calculator_view.dart';
+
 import '../helpers/test_database.dart';
 
 void main() {
@@ -28,41 +29,46 @@ void main() {
           ChangeNotifierProvider<GpaCalculatorProvider>.value(value: provider),
           ChangeNotifierProvider<ThemeProvider>.value(value: themeProvider),
         ],
-        child: MaterialApp(
-          theme: AppTheme.darkTheme(),
-          home: child,
-        ),
+        child: MaterialApp(theme: AppTheme.darkTheme(), home: child),
       );
     }
 
-    testWidgets('Renders GpaCalculatorView with unique FAB heroTag fab_gpa_simulate', (tester) async {
-      tester.view.physicalSize = const Size(1080, 2400);
-      tester.view.devicePixelRatio = 2.75;
-      addTearDown(tester.view.resetPhysicalSize);
+    testWidgets(
+      'Renders GpaCalculatorView with unique FAB heroTag fab_gpa_simulate',
+      (tester) async {
+        tester.view.physicalSize = const Size(1080, 2400);
+        tester.view.devicePixelRatio = 2.75;
+        addTearDown(tester.view.resetPhysicalSize);
 
-      await tester.pumpWidget(buildTestApp(child: const GpaCalculatorView()));
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(buildTestApp(child: const GpaCalculatorView()));
+        await tester.pumpAndSettle();
 
-      final fabFinder = find.byType(FloatingActionButton);
-      expect(fabFinder, findsOneWidget);
+        final fabFinder = find.byType(FloatingActionButton);
+        expect(fabFinder, findsOneWidget);
 
-      final fab = tester.widget<FloatingActionButton>(fabFinder);
-      expect(fab.heroTag, equals('fab_gpa_simulate'));
-    });
+        final fab = tester.widget<FloatingActionButton>(fabFinder);
+        expect(fab.heroTag, equals('fab_gpa_simulate'));
+      },
+    );
 
-    testWidgets('Renders 800x360 landscape viewport with ZERO RenderFlex overflows', (tester) async {
-      tester.view.physicalSize = const Size(800, 360);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+    testWidgets(
+      'Renders 800x360 landscape viewport with ZERO RenderFlex overflows',
+      (tester) async {
+        tester.view.physicalSize = const Size(800, 360);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
 
-      await tester.pumpWidget(buildTestApp(child: const GpaCalculatorView()));
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(buildTestApp(child: const GpaCalculatorView()));
+        await tester.pumpAndSettle();
 
-      expect(find.byType(GpaCalculatorView), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    });
+        expect(find.byType(GpaCalculatorView), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
 
-    testWidgets('Tapping grade chip updates projected CGPA without errors', (tester) async {
+    testWidgets('Tapping grade chip updates projected CGPA without errors', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(400, 900);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);

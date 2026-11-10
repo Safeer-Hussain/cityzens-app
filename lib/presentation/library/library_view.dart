@@ -1,10 +1,14 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/utils/app_feedback.dart';
+import '../../core/utils/citation_generator.dart';
 import '../../data/models/book.dart';
 import '../library/library_provider.dart';
 import 'widgets/book_detail_sheet.dart';
+import 'widgets/citation_export_modal.dart';
 
 class LibraryView extends StatefulWidget {
   const LibraryView({super.key});
@@ -13,7 +17,8 @@ class LibraryView extends StatefulWidget {
   State<LibraryView> createState() => _LibraryViewState();
 }
 
-class _LibraryViewState extends State<LibraryView> with SingleTickerProviderStateMixin {
+class _LibraryViewState extends State<LibraryView>
+    with SingleTickerProviderStateMixin {
   late final TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounceTimer;
@@ -52,7 +57,8 @@ class _LibraryViewState extends State<LibraryView> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Consumer<LibraryProvider>(
       builder: (context, provider, _) {
@@ -130,17 +136,47 @@ class _LibraryViewState extends State<LibraryView> with SingleTickerProviderStat
           const SizedBox(height: 10),
           _buildCategoryChips(provider, colors),
           const SizedBox(height: 12),
-          Text(
-            'MATCHING CATALOG TITLES (${provider.books.length})',
-            style: TextStyle(
-              color: colors.onSurfaceVariant,
-              fontSize: 11,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 0.8,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  'CATALOG TITLES (${provider.books.length})',
+                  style: TextStyle(
+                    color: colors.onSurfaceVariant,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.8,
+                  ),
+                ),
+              ),
+              TextButton.icon(
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                icon: Icon(
+                  Icons.format_quote_rounded,
+                  size: 14,
+                  color: colors.primary,
+                ),
+                label: Text(
+                  'Export Bibliography',
+                  style: TextStyle(
+                    color: colors.primary,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                onPressed: () => _showBatchBibliographyModal(context, provider),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
-          ...provider.books.map((book) => _buildBookCard(context, book, provider, colors)),
+          ...provider.books.map(
+            (book) => _buildBookCard(context, book, provider, colors),
+          ),
           const SizedBox(height: 80),
         ],
       ),
@@ -188,12 +224,47 @@ class _LibraryViewState extends State<LibraryView> with SingleTickerProviderStat
                       const SizedBox(height: 6),
                       Text(
                         'Total Seeded Titles: 42 peer-reviewed reference works.',
-                        style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11),
+                        style: TextStyle(
+                          color: colors.onSurfaceVariant,
+                          fontSize: 11,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Active Loans: ${provider.borrowedCount} volumes currently borrowed.',
-                        style: TextStyle(color: colors.primary, fontSize: 11, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          color: colors.primary,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            side: BorderSide(color: colors.primary),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          icon: Icon(
+                            Icons.format_quote_rounded,
+                            size: 14,
+                            color: colors.primary,
+                          ),
+                          label: Text(
+                            'Export Bibliography',
+                            style: TextStyle(
+                              color: colors.primary,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          onPressed: () =>
+                              _showBatchBibliographyModal(context, provider),
+                        ),
                       ),
                     ],
                   ),
@@ -216,7 +287,12 @@ class _LibraryViewState extends State<LibraryView> with SingleTickerProviderStat
             ),
             itemCount: provider.books.length,
             itemBuilder: (context, index) {
-              return _buildBookCard(context, provider.books[index], provider, colors);
+              return _buildBookCard(
+                context,
+                provider.books[index],
+                provider,
+                colors,
+              );
             },
           ),
         ),
@@ -231,10 +307,18 @@ class _LibraryViewState extends State<LibraryView> with SingleTickerProviderStat
       decoration: InputDecoration(
         hintText: 'Search by title, author, or ISBN-13...',
         hintStyle: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
-        prefixIcon: Icon(Icons.search_rounded, color: colors.onSurfaceVariant, size: 20),
+        prefixIcon: Icon(
+          Icons.search_rounded,
+          color: colors.onSurfaceVariant,
+          size: 20,
+        ),
         suffixIcon: _searchController.text.isNotEmpty
             ? IconButton(
-                icon: Icon(Icons.clear_rounded, color: colors.onSurfaceVariant, size: 18),
+                icon: Icon(
+                  Icons.clear_rounded,
+                  color: colors.onSurfaceVariant,
+                  size: 18,
+                ),
                 onPressed: () {
                   _searchController.clear();
                   provider.setSearchQuery('');
@@ -243,7 +327,10 @@ class _LibraryViewState extends State<LibraryView> with SingleTickerProviderStat
             : null,
         filled: true,
         fillColor: colors.surfaceContainer,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 10,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: colors.outlineVariant),
@@ -321,10 +408,7 @@ class _LibraryViewState extends State<LibraryView> with SingleTickerProviderStat
                 border: Border.all(color: colors.outlineVariant),
               ),
               clipBehavior: Clip.antiAlias,
-              child: Image.asset(
-                book.coverAsset,
-                fit: BoxFit.cover,
-              ),
+              child: Image.asset(book.coverAsset, fit: BoxFit.cover),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -335,7 +419,10 @@ class _LibraryViewState extends State<LibraryView> with SingleTickerProviderStat
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: colors.primaryContainer,
                           borderRadius: BorderRadius.circular(4),
@@ -349,23 +436,49 @@ class _LibraryViewState extends State<LibraryView> with SingleTickerProviderStat
                           ),
                         ),
                       ),
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        icon: Icon(
-                          book.isReserved ? Icons.bookmark_added : Icons.bookmark_border_rounded,
-                          color: book.isReserved ? colors.primary : colors.onSurfaceVariant,
-                          size: 18,
-                        ),
-                        onPressed: () async {
-                          await provider.toggleReserve(book.id);
-                          if (context.mounted) {
-                            AppFeedback.showSuccess(
+                      Row(
+                        children: [
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            icon: Icon(
+                              Icons.format_quote_rounded,
+                              color: colors.primary,
+                              size: 18,
+                            ),
+                            tooltip: 'Cite Book',
+                            onPressed: () => CitationExportModal.show(
                               context,
-                              book.isReserved ? 'Reservation removed for "${book.title}".' : 'Reserved "${book.title}".',
-                            );
-                          }
-                        },
+                              book,
+                              provider,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            icon: Icon(
+                              book.isReserved
+                                  ? Icons.bookmark_added
+                                  : Icons.bookmark_border_rounded,
+                              color: book.isReserved
+                                  ? colors.primary
+                                  : colors.onSurfaceVariant,
+                              size: 18,
+                            ),
+                            onPressed: () async {
+                              await provider.toggleReserve(book.id);
+                              if (context.mounted) {
+                                AppFeedback.showSuccess(
+                                  context,
+                                  book.isReserved
+                                      ? 'Reservation removed for "${book.title}".'
+                                      : 'Reserved "${book.title}".',
+                                );
+                              }
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -407,7 +520,9 @@ class _LibraryViewState extends State<LibraryView> with SingleTickerProviderStat
                             ? '${book.availableCopies} Available'
                             : 'Waitlist',
                         style: TextStyle(
-                          color: book.isAvailable ? colors.secondary : colors.error,
+                          color: book.isAvailable
+                              ? colors.secondary
+                              : colors.error,
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                         ),
@@ -433,11 +548,19 @@ class _LibraryViewState extends State<LibraryView> with SingleTickerProviderStat
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.auto_stories_outlined, size: 48, color: colors.onSurfaceVariant),
+            Icon(
+              Icons.auto_stories_outlined,
+              size: 48,
+              color: colors.onSurfaceVariant,
+            ),
             const SizedBox(height: 12),
             Text(
               'No Active Borrowed Records',
-              style: TextStyle(color: colors.onSurface, fontWeight: FontWeight.w700, fontSize: 16),
+              style: TextStyle(
+                color: colors.onSurface,
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
@@ -465,7 +588,11 @@ class _LibraryViewState extends State<LibraryView> with SingleTickerProviderStat
             ),
             child: Row(
               children: [
-                Icon(Icons.warning_amber_rounded, color: colors.error, size: 20),
+                Icon(
+                  Icons.warning_amber_rounded,
+                  color: colors.error,
+                  size: 20,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -542,13 +669,19 @@ class _LibraryViewState extends State<LibraryView> with SingleTickerProviderStat
                           const SizedBox(height: 2),
                           Text(
                             'By ${item.book.author}',
-                            style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11),
+                            style: TextStyle(
+                              color: colors.onSurfaceVariant,
+                              fontSize: 11,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
                                 decoration: BoxDecoration(
                                   color: isOver
                                       ? colors.error.withValues(alpha: 0.15)
@@ -560,7 +693,9 @@ class _LibraryViewState extends State<LibraryView> with SingleTickerProviderStat
                                       ? 'OVERDUE by ${days.abs()} Day${days.abs() > 1 ? "s" : ""}'
                                       : 'Due in $days Days',
                                   style: TextStyle(
-                                    color: isOver ? colors.error : colors.onPrimaryContainer,
+                                    color: isOver
+                                        ? colors.error
+                                        : colors.onPrimaryContainer,
                                     fontSize: 10,
                                     fontWeight: FontWeight.w800,
                                   ),
@@ -593,15 +728,22 @@ class _LibraryViewState extends State<LibraryView> with SingleTickerProviderStat
                           backgroundColor: colors.primary,
                           foregroundColor: colors.onPrimary,
                           padding: const EdgeInsets.symmetric(vertical: 10),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
                         icon: const Icon(Icons.update_rounded, size: 16),
                         label: Text(
                           'Renew (+14 Days)',
-                          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12,
+                          ),
                         ),
                         onPressed: () async {
-                          final success = await provider.renewLoan(item.loan.id);
+                          final success = await provider.renewLoan(
+                            item.loan.id,
+                          );
                           if (success && context.mounted) {
                             AppFeedback.showSuccess(
                               context,
@@ -616,16 +758,29 @@ class _LibraryViewState extends State<LibraryView> with SingleTickerProviderStat
                       child: OutlinedButton.icon(
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 10),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                           side: BorderSide(color: colors.outlineVariant),
                         ),
-                        icon: Icon(Icons.assignment_return_outlined, size: 16, color: colors.onSurface),
+                        icon: Icon(
+                          Icons.assignment_return_outlined,
+                          size: 16,
+                          color: colors.onSurface,
+                        ),
                         label: Text(
                           'Return Book',
-                          style: TextStyle(color: colors.onSurface, fontWeight: FontWeight.w600, fontSize: 12),
+                          style: TextStyle(
+                            color: colors.onSurface,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                          ),
                         ),
                         onPressed: () async {
-                          final success = await provider.returnBook(item.loan.id, item.book.id);
+                          final success = await provider.returnBook(
+                            item.loan.id,
+                            item.book.id,
+                          );
                           if (success && context.mounted) {
                             AppFeedback.showSuccess(
                               context,
@@ -662,6 +817,205 @@ class _LibraryViewState extends State<LibraryView> with SingleTickerProviderStat
       ),
       builder: (sheetContext) {
         return BookDetailSheet(book: book, provider: provider);
+      },
+    );
+  }
+
+  void _showBatchBibliographyModal(
+    BuildContext context,
+    LibraryProvider provider,
+  ) {
+    final colors = Theme.of(context).colorScheme;
+    CitationStyle activeStyle = provider.selectedCitationStyle;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: colors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return StatefulBuilder(
+          builder: (modalContext, setModalState) {
+            final bibliographyText = provider.generateBatchBibliography(
+              style: activeStyle,
+            );
+
+            return SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                  top: 14,
+                  bottom: MediaQuery.of(modalContext).viewInsets.bottom + 16,
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 38,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: colors.outlineVariant,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: colors.primaryContainer,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              Icons.menu_book_rounded,
+                              size: 20,
+                              color: colors.primary,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Export Research Bibliography',
+                                  style: TextStyle(
+                                    color: colors.onSurface,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                                Text(
+                                  'Referencing ${provider.books.length} volumes in ${activeStyle.displayName}',
+                                  style: TextStyle(
+                                    color: colors.onSurfaceVariant,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: CitationStyle.values.map((style) {
+                            final isSel = activeStyle == style;
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 6),
+                              child: ChoiceChip(
+                                label: Text(style.displayName),
+                                selected: isSel,
+                                onSelected: (sel) {
+                                  if (sel) {
+                                    setModalState(() => activeStyle = style);
+                                    provider.setCitationStyle(style);
+                                  }
+                                },
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Container(
+                        height: 200,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: colors.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: colors.outlineVariant),
+                        ),
+                        child: SingleChildScrollView(
+                          child: SelectableText(
+                            bibliographyText,
+                            style: TextStyle(
+                              color: colors.onSurface,
+                              fontSize: 10,
+                              fontFamily: 'monospace',
+                              height: 1.4,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                                side: BorderSide(color: colors.outlineVariant),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              onPressed: () => Navigator.of(modalContext).pop(),
+                              child: Text(
+                                'Close',
+                                style: TextStyle(
+                                  color: colors.onSurfaceVariant,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            flex: 2,
+                            child: ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: colors.primary,
+                                foregroundColor: colors.onPrimary,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              icon: const Icon(
+                                Icons.copy_all_rounded,
+                                size: 18,
+                              ),
+                              label: const Text(
+                                'Copy Bibliography (.md)',
+                                style: TextStyle(fontWeight: FontWeight.w700),
+                              ),
+                              onPressed: () async {
+                                await provider.copyTextToClipboard(
+                                  bibliographyText,
+                                );
+                                if (context.mounted) {
+                                  Navigator.of(modalContext).pop();
+                                  AppFeedback.showSuccess(
+                                    context,
+                                    'Copied ${provider.books.length} references (${activeStyle.displayName}) to clipboard.',
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
       },
     );
   }

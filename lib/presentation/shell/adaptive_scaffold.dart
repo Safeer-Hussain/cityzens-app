@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/services/connectivity_service.dart';
 import '../../core/theme/theme_provider.dart';
 import '../attendance/attendance_view.dart';
@@ -31,16 +32,21 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     final connectivity = Provider.of<ConnectivityService>(context);
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     final screens = [
-      AttendanceView(onNavigateToScanner: () => setState(() => _currentIndex = 2)),
+      AttendanceView(
+        onNavigateToScanner: () => setState(() => _currentIndex = 2),
+      ),
       const LibraryView(),
       const ScannerHubView(),
       const AiAcademicTutorView(),
-      CampusFeedView(onOpenDebugDrawer: () => _scaffoldKey.currentState?.openEndDrawer()),
+      CampusFeedView(
+        onOpenDebugDrawer: () => _scaffoldKey.currentState?.openEndDrawer(),
+      ),
     ];
 
     return GestureDetector(
@@ -67,7 +73,10 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                     shape: BoxShape.circle,
                   ),
                   clipBehavior: Clip.antiAlias,
-                  child: Image.asset('assets/icons/app_icon.png', fit: BoxFit.cover),
+                  child: Image.asset(
+                    'assets/icons/app_icon.png',
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -88,7 +97,9 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
               IconButton(
                 tooltip: 'Toggle Dark/Light Mode',
                 icon: Icon(
-                  themeProvider.isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                  themeProvider.isDarkMode
+                      ? Icons.light_mode_rounded
+                      : Icons.dark_mode_rounded,
                   size: isLandscape ? 16 : 20,
                   color: colors.onSurfaceVariant,
                 ),
@@ -116,15 +127,26 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                   : CrossFadeState.showSecond,
               firstChild: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: colors.primaryContainer,
-                  border: Border(bottom: BorderSide(color: colors.primary.withValues(alpha: 0.3))),
+                  border: Border(
+                    bottom: BorderSide(
+                      color: colors.primary.withValues(alpha: 0.3),
+                    ),
+                  ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.cloud_off_rounded, size: 14, color: colors.primary),
+                    Icon(
+                      Icons.cloud_off_rounded,
+                      size: 14,
+                      color: colors.primary,
+                    ),
                     const SizedBox(width: 8),
                     Flexible(
                       child: Text(
@@ -175,27 +197,63 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         destinations: [
           NavigationDestination(
-            icon: Icon(Icons.fact_check_outlined, color: colors.onSurfaceVariant, size: 20),
-            selectedIcon: Icon(Icons.fact_check, color: colors.primary, size: 20),
+            icon: Icon(
+              Icons.fact_check_outlined,
+              color: colors.onSurfaceVariant,
+              size: 20,
+            ),
+            selectedIcon: Icon(
+              Icons.fact_check,
+              color: colors.primary,
+              size: 20,
+            ),
             label: 'Attendance',
           ),
           NavigationDestination(
-            icon: Icon(Icons.auto_stories_outlined, color: colors.onSurfaceVariant, size: 20),
-            selectedIcon: Icon(Icons.auto_stories, color: colors.primary, size: 20),
+            icon: Icon(
+              Icons.auto_stories_outlined,
+              color: colors.onSurfaceVariant,
+              size: 20,
+            ),
+            selectedIcon: Icon(
+              Icons.auto_stories,
+              color: colors.primary,
+              size: 20,
+            ),
             label: 'Library',
           ),
           NavigationDestination(
-            icon: Icon(Icons.center_focus_strong_outlined, color: colors.onSurfaceVariant, size: 20),
-            selectedIcon: Icon(Icons.center_focus_strong, color: colors.primary, size: 20),
+            icon: Icon(
+              Icons.center_focus_strong_outlined,
+              color: colors.onSurfaceVariant,
+              size: 20,
+            ),
+            selectedIcon: Icon(
+              Icons.center_focus_strong,
+              color: colors.primary,
+              size: 20,
+            ),
             label: 'Scanner',
           ),
           NavigationDestination(
-            icon: Icon(Icons.psychology_outlined, color: colors.onSurfaceVariant, size: 20),
-            selectedIcon: Icon(Icons.psychology, color: colors.primary, size: 20),
+            icon: Icon(
+              Icons.psychology_outlined,
+              color: colors.onSurfaceVariant,
+              size: 20,
+            ),
+            selectedIcon: Icon(
+              Icons.psychology,
+              color: colors.primary,
+              size: 20,
+            ),
             label: 'AI Tutor',
           ),
           NavigationDestination(
-            icon: Icon(Icons.hub_outlined, color: colors.onSurfaceVariant, size: 20),
+            icon: Icon(
+              Icons.hub_outlined,
+              color: colors.onSurfaceVariant,
+              size: 20,
+            ),
             selectedIcon: Icon(Icons.hub, color: colors.primary, size: 20),
             label: 'Campus',
           ),
@@ -221,27 +279,63 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
             indicatorColor: colors.primaryContainer,
             destinations: [
               NavigationRailDestination(
-                icon: Icon(Icons.fact_check_outlined, color: colors.onSurfaceVariant, size: 18),
-                selectedIcon: Icon(Icons.fact_check, color: colors.primary, size: 18),
+                icon: Icon(
+                  Icons.fact_check_outlined,
+                  color: colors.onSurfaceVariant,
+                  size: 18,
+                ),
+                selectedIcon: Icon(
+                  Icons.fact_check,
+                  color: colors.primary,
+                  size: 18,
+                ),
                 label: const Text('Attendance'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.auto_stories_outlined, color: colors.onSurfaceVariant, size: 18),
-                selectedIcon: Icon(Icons.auto_stories, color: colors.primary, size: 18),
+                icon: Icon(
+                  Icons.auto_stories_outlined,
+                  color: colors.onSurfaceVariant,
+                  size: 18,
+                ),
+                selectedIcon: Icon(
+                  Icons.auto_stories,
+                  color: colors.primary,
+                  size: 18,
+                ),
                 label: const Text('Library'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.center_focus_strong_outlined, color: colors.onSurfaceVariant, size: 18),
-                selectedIcon: Icon(Icons.center_focus_strong, color: colors.primary, size: 18),
+                icon: Icon(
+                  Icons.center_focus_strong_outlined,
+                  color: colors.onSurfaceVariant,
+                  size: 18,
+                ),
+                selectedIcon: Icon(
+                  Icons.center_focus_strong,
+                  color: colors.primary,
+                  size: 18,
+                ),
                 label: const Text('Scanner'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.psychology_outlined, color: colors.onSurfaceVariant, size: 18),
-                selectedIcon: Icon(Icons.psychology, color: colors.primary, size: 18),
+                icon: Icon(
+                  Icons.psychology_outlined,
+                  color: colors.onSurfaceVariant,
+                  size: 18,
+                ),
+                selectedIcon: Icon(
+                  Icons.psychology,
+                  color: colors.primary,
+                  size: 18,
+                ),
                 label: const Text('AI Tutor'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.hub_outlined, color: colors.onSurfaceVariant, size: 18),
+                icon: Icon(
+                  Icons.hub_outlined,
+                  color: colors.onSurfaceVariant,
+                  size: 18,
+                ),
                 selectedIcon: Icon(Icons.hub, color: colors.primary, size: 18),
                 label: const Text('Campus'),
               ),

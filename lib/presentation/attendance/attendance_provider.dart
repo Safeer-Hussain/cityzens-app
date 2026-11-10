@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+
 import '../../data/models/course_attendance.dart';
 import '../../data/models/attendance_record.dart';
 import '../../data/repositories/attendance_repository.dart';
@@ -32,10 +33,13 @@ class AttendanceProvider extends ChangeNotifier {
     return double.parse(((totalP / totalC) * 100).toStringAsFixed(1));
   }
 
-  int get totalClassesCount => _courses.fold(0, (acc, c) => acc + c.totalClasses);
-  int get totalPresentCount => _courses.fold(0, (acc, c) => acc + c.presentCount);
+  int get totalClassesCount =>
+      _courses.fold(0, (acc, c) => acc + c.totalClasses);
+  int get totalPresentCount =>
+      _courses.fold(0, (acc, c) => acc + c.presentCount);
   int get totalAbsentCount => _courses.fold(0, (acc, c) => acc + c.absentCount);
-  int get totalExcusedCount => _courses.fold(0, (acc, c) => acc + c.excusedCount);
+  int get totalExcusedCount =>
+      _courses.fold(0, (acc, c) => acc + c.excusedCount);
 
   void toggleRoleMode() {
     _isStudentMode = !_isStudentMode;

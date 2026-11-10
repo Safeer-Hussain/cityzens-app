@@ -6,7 +6,8 @@ class ScannerRepository {
 
   ScannerRepository({required this.bridge});
 
-  Future<Map<String, dynamic>> initializeCamera() => bridge.initializeCameraSensor();
+  Future<Map<String, dynamic>> initializeCamera() =>
+      bridge.initializeCameraSensor();
 
   Future<bool> toggleTorch() => bridge.toggleTorch();
 

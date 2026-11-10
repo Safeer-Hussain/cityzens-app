@@ -1,4 +1,5 @@
 import 'package:sqflite/sqflite.dart';
+
 import '../../core/database/app_database.dart';
 import '../models/academic_transcript.dart';
 
@@ -76,7 +77,11 @@ class TranscriptRepository {
 
     final projectedTotalCredits = priorCredits + simCredits;
     final projectedCgpa = projectedTotalCredits > 0
-        ? double.parse(((priorPoints + simPoints) / projectedTotalCredits).toStringAsFixed(2))
+        ? double.parse(
+            ((priorPoints + simPoints) / projectedTotalCredits).toStringAsFixed(
+              2,
+            ),
+          )
         : 0.0;
 
     String honors;

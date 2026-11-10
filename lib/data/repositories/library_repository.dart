@@ -1,4 +1,5 @@
 import 'package:sqflite/sqflite.dart';
+
 import '../../core/database/app_database.dart';
 import '../models/book.dart';
 import '../models/book_loan.dart';
@@ -17,14 +18,15 @@ class LibraryRepository {
 
   Database get _db => database.db;
 
-  Future<List<BookModel>> getBooks({
-    String? query,
-    String? category,
-  }) async {
+  Future<List<BookModel>> getBooks({String? query, String? category}) async {
     String whereClause = '';
     List<dynamic> whereArgs = [];
 
-    if (category != null && category.isNotEmpty && category != 'All' && category != 'Available Now' && category != 'Reserved') {
+    if (category != null &&
+        category.isNotEmpty &&
+        category != 'All' &&
+        category != 'Available Now' &&
+        category != 'Reserved') {
       whereClause = 'category = ?';
       whereArgs.add(category);
     } else if (category == 'Available Now') {

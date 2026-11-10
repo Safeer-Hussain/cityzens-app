@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/utils/app_feedback.dart';
 import '../../data/models/academic_transcript.dart';
 import 'gpa_calculator_provider.dart';
@@ -10,7 +11,8 @@ class GpaCalculatorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Consumer<GpaCalculatorProvider>(
       builder: (context, provider, _) {
@@ -18,7 +20,9 @@ class GpaCalculatorView extends StatelessWidget {
           return Scaffold(
             backgroundColor: colors.surface,
             appBar: _buildAppBar(context, colors, isLandscape),
-            body: Center(child: CircularProgressIndicator(color: colors.primary)),
+            body: Center(
+              child: CircularProgressIndicator(color: colors.primary),
+            ),
           );
         }
 
@@ -45,7 +49,11 @@ class GpaCalculatorView extends StatelessWidget {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context, ColorScheme colors, bool isLandscape) {
+  PreferredSizeWidget _buildAppBar(
+    BuildContext context,
+    ColorScheme colors,
+    bool isLandscape,
+  ) {
     return PreferredSize(
       preferredSize: Size.fromHeight(isLandscape ? 36.0 : 48.0),
       child: AppBar(
@@ -66,10 +74,17 @@ class GpaCalculatorView extends StatelessWidget {
             builder: (context, prov, _) {
               return IconButton(
                 tooltip: 'Reset Simulation to Defaults',
-                icon: Icon(Icons.refresh_rounded, size: isLandscape ? 16 : 20, color: colors.onSurfaceVariant),
+                icon: Icon(
+                  Icons.refresh_rounded,
+                  size: isLandscape ? 16 : 20,
+                  color: colors.onSurfaceVariant,
+                ),
                 onPressed: () {
                   prov.resetSimulation();
-                  AppFeedback.showInfo(context, 'Reset simulation to default course load.');
+                  AppFeedback.showInfo(
+                    context,
+                    'Reset simulation to default course load.',
+                  );
                 },
               );
             },
@@ -124,7 +139,9 @@ class GpaCalculatorView extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        ...provider.simulatedCourses.map((c) => _buildCourseCard(c, provider, colors)),
+        ...provider.simulatedCourses.map(
+          (c) => _buildCourseCard(c, provider, colors),
+        ),
         const SizedBox(height: 14),
         _buildHistoricalTranscriptsSection(provider, colors),
         const SizedBox(height: 80),
@@ -184,7 +201,11 @@ class GpaCalculatorView extends StatelessWidget {
                         minimumSize: Size.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      icon: Icon(Icons.add_rounded, size: 14, color: colors.primary),
+                      icon: Icon(
+                        Icons.add_rounded,
+                        size: 14,
+                        color: colors.primary,
+                      ),
                       label: Text(
                         'Add Course',
                         style: TextStyle(
@@ -198,7 +219,9 @@ class GpaCalculatorView extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 6),
-                ...provider.simulatedCourses.map((c) => _buildCourseCard(c, provider, colors)),
+                ...provider.simulatedCourses.map(
+                  (c) => _buildCourseCard(c, provider, colors),
+                ),
                 const SizedBox(height: 60),
               ],
             ),
@@ -241,7 +264,9 @@ class GpaCalculatorView extends StatelessWidget {
                       strokeWidth: 8,
                       backgroundColor: colors.surfaceContainerHighest,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        projectedCgpa >= 3.75 ? colors.secondary : colors.primary,
+                        projectedCgpa >= 3.75
+                            ? colors.secondary
+                            : colors.primary,
                       ),
                     ),
                     Column(
@@ -274,7 +299,10 @@ class GpaCalculatorView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
                         color: colors.secondary.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(6),
@@ -306,7 +334,9 @@ class GpaCalculatorView extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              isHigher ? Icons.trending_up_rounded : Icons.trending_down_rounded,
+                              isHigher
+                                  ? Icons.trending_up_rounded
+                                  : Icons.trending_down_rounded,
                               size: 14,
                               color: isHigher ? colors.secondary : colors.error,
                             ),
@@ -314,7 +344,9 @@ class GpaCalculatorView extends StatelessWidget {
                             Text(
                               '${(projectedCgpa - priorCgpa >= 0 ? "+" : "")}${(projectedCgpa - priorCgpa).toStringAsFixed(2)}',
                               style: TextStyle(
-                                color: isHigher ? colors.secondary : colors.error,
+                                color: isHigher
+                                    ? colors.secondary
+                                    : colors.error,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -381,7 +413,10 @@ class GpaCalculatorView extends StatelessWidget {
   }) {
     return Column(
       children: [
-        Text(label, style: TextStyle(color: colors.onSurfaceVariant, fontSize: 10)),
+        Text(
+          label,
+          style: TextStyle(color: colors.onSurfaceVariant, fontSize: 10),
+        ),
         const SizedBox(height: 2),
         Text(
           value,
@@ -416,7 +451,10 @@ class GpaCalculatorView extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 7,
+                  vertical: 2.5,
+                ),
                 decoration: BoxDecoration(
                   color: colors.primaryContainer,
                   borderRadius: BorderRadius.circular(6),
@@ -456,7 +494,11 @@ class GpaCalculatorView extends StatelessWidget {
                 IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
-                  icon: Icon(Icons.close_rounded, size: 16, color: colors.onSurfaceVariant),
+                  icon: Icon(
+                    Icons.close_rounded,
+                    size: 16,
+                    color: colors.onSurfaceVariant,
+                  ),
                   onPressed: () => provider.removeCourse(course.id),
                 ),
               ],
@@ -485,19 +527,30 @@ class GpaCalculatorView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(6),
                     onTap: () => provider.updateCourseGrade(course.id, grade),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 9,
+                        vertical: 5,
+                      ),
                       decoration: BoxDecoration(
-                        color: isSelected ? colors.primary : colors.surfaceContainerHighest,
+                        color: isSelected
+                            ? colors.primary
+                            : colors.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(
-                          color: isSelected ? colors.primary : colors.outlineVariant,
+                          color: isSelected
+                              ? colors.primary
+                              : colors.outlineVariant,
                         ),
                       ),
                       child: Text(
                         grade,
                         style: TextStyle(
-                          color: isSelected ? colors.onPrimary : colors.onSurface,
-                          fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                          color: isSelected
+                              ? colors.onPrimary
+                              : colors.onSurface,
+                          fontWeight: isSelected
+                              ? FontWeight.w800
+                              : FontWeight.w600,
                           fontSize: 11,
                         ),
                       ),
@@ -553,7 +606,8 @@ class GpaCalculatorView extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: provider.transcripts.length,
-            separatorBuilder: (_, _) => Divider(color: colors.outlineVariant, height: 1),
+            separatorBuilder: (_, _) =>
+                Divider(color: colors.outlineVariant, height: 1),
             itemBuilder: (context, idx) {
               final item = provider.transcripts[idx];
               return Padding(
@@ -579,7 +633,10 @@ class GpaCalculatorView extends StatelessWidget {
                             '${item.creditHours} Credits  •  ${item.qualityPoints} QP',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: colors.onSurfaceVariant, fontSize: 10),
+                            style: TextStyle(
+                              color: colors.onSurfaceVariant,
+                              fontSize: 10,
+                            ),
                           ),
                         ],
                       ),
@@ -604,7 +661,10 @@ class GpaCalculatorView extends StatelessWidget {
     );
   }
 
-  void _showAddCourseSheet(BuildContext context, GpaCalculatorProvider provider) {
+  void _showAddCourseSheet(
+    BuildContext context,
+    GpaCalculatorProvider provider,
+  ) {
     final colors = Theme.of(context).colorScheme;
     final codeController = TextEditingController();
     final titleController = TextEditingController();
@@ -659,7 +719,9 @@ class GpaCalculatorView extends StatelessWidget {
                         decoration: InputDecoration(
                           labelText: 'Course Code',
                           hintText: 'e.g. CS-450',
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -668,7 +730,9 @@ class GpaCalculatorView extends StatelessWidget {
                         decoration: InputDecoration(
                           labelText: 'Course Title',
                           hintText: 'e.g. Autonomous Robotic Systems',
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -680,7 +744,10 @@ class GpaCalculatorView extends StatelessWidget {
                         children: [
                           Text(
                             'Credit Hours: $credits',
-                            style: TextStyle(color: colors.onSurface, fontWeight: FontWeight.w700),
+                            style: TextStyle(
+                              color: colors.onSurface,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                           Row(
                             mainAxisSize: MainAxisSize.min,
@@ -691,7 +758,8 @@ class GpaCalculatorView extends StatelessWidget {
                                 child: ChoiceChip(
                                   label: Text('$c'),
                                   selected: isSel,
-                                  onSelected: (_) => setModalState(() => credits = c),
+                                  onSelected: (_) =>
+                                      setModalState(() => credits = c),
                                 ),
                               );
                             }).toList(),
@@ -704,7 +772,9 @@ class GpaCalculatorView extends StatelessWidget {
                           backgroundColor: colors.primary,
                           foregroundColor: colors.onPrimary,
                           padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                         onPressed: () {
                           final code = codeController.text.trim();
@@ -719,9 +789,15 @@ class GpaCalculatorView extends StatelessWidget {
                           );
 
                           Navigator.of(sheetContext).pop();
-                          AppFeedback.showSuccess(context, 'Added $code ($credits cr) to simulation.');
+                          AppFeedback.showSuccess(
+                            context,
+                            'Added $code ($credits cr) to simulation.',
+                          );
                         },
-                        child: const Text('Add to Simulation', style: TextStyle(fontWeight: FontWeight.w700)),
+                        child: const Text(
+                          'Add to Simulation',
+                          style: TextStyle(fontWeight: FontWeight.w700),
+                        ),
                       ),
                     ],
                   ),
@@ -744,7 +820,10 @@ class GpaCalculatorView extends StatelessWidget {
           backgroundColor: colors.surface,
           title: Text(
             'Commit Semester to SQLite?',
-            style: TextStyle(color: colors.onSurface, fontWeight: FontWeight.w800),
+            style: TextStyle(
+              color: colors.onSurface,
+              fontWeight: FontWeight.w800,
+            ),
           ),
           content: Text(
             'This will permanently record Semester 8 (${provider.simulatedSemesterGpa.toStringAsFixed(2)} GPA, ${provider.simulatedCredits} credits) into your official university transcript ledger.',
@@ -753,7 +832,10 @@ class GpaCalculatorView extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
-              child: Text('Cancel', style: TextStyle(color: colors.onSurfaceVariant)),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: colors.onSurfaceVariant),
+              ),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -770,7 +852,10 @@ class GpaCalculatorView extends StatelessWidget {
                   );
                 }
               },
-              child: const Text('Commit Record', style: TextStyle(fontWeight: FontWeight.w700)),
+              child: const Text(
+                'Commit Record',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
             ),
           ],
         );

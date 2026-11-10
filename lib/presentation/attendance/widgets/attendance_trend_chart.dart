@@ -4,10 +4,7 @@ import 'package:flutter/material.dart';
 class AttendanceTrendChart extends StatelessWidget {
   final double currentPercentage;
 
-  const AttendanceTrendChart({
-    super.key,
-    required this.currentPercentage,
-  });
+  const AttendanceTrendChart({super.key, required this.currentPercentage});
 
   @override
   Widget build(BuildContext context) {

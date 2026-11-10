@@ -11,7 +11,8 @@ class AcademicTranscriptModel {
     required this.gpa,
   });
 
-  double get qualityPoints => double.parse((creditHours * gpa).toStringAsFixed(2));
+  double get qualityPoints =>
+      double.parse((creditHours * gpa).toStringAsFixed(2));
 
   Map<String, dynamic> toMap() {
     return {
@@ -61,7 +62,8 @@ class WhatIfCourseSimulation {
   });
 
   double get gradePointValue => gradeScale[expectedGrade] ?? 4.0;
-  double get totalQualityPoints => double.parse((creditHours * gradePointValue).toStringAsFixed(2));
+  double get totalQualityPoints =>
+      double.parse((creditHours * gradePointValue).toStringAsFixed(2));
 
   WhatIfCourseSimulation copyWith({
     String? id,

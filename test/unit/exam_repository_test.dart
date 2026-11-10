@@ -3,32 +3,36 @@ import 'package:cityzens_app/core/utils/exam_cryptography.dart';
 import 'package:cityzens_app/data/models/exam_hall_pass.dart';
 import 'package:cityzens_app/data/repositories/exam_repository.dart';
 import 'package:cityzens_app/presentation/exam/exam_provider.dart';
+
 import '../helpers/test_database.dart';
 
 void main() {
   group('ExamCryptography & SHA-256 Tests', () {
-    test('generateChecksum produces deterministic 64-character SHA-256 hex digest', () {
-      final checksum1 = ExamCryptography.generateChecksum(
-        passId: 'exam_pass_001',
-        studentId: 'CTZ-2024-8842',
-        courseCode: 'CS-401',
-        hallName: 'Turing Hall',
-        deskNumber: 'TH-C14',
-        examTimestamp: 1795000000,
-      );
+    test(
+      'generateChecksum produces deterministic 64-character SHA-256 hex digest',
+      () {
+        final checksum1 = ExamCryptography.generateChecksum(
+          passId: 'exam_pass_001',
+          studentId: 'CTZ-2024-8842',
+          courseCode: 'CS-401',
+          hallName: 'Turing Hall',
+          deskNumber: 'TH-C14',
+          examTimestamp: 1795000000,
+        );
 
-      final checksum2 = ExamCryptography.generateChecksum(
-        passId: 'exam_pass_001',
-        studentId: 'CTZ-2024-8842',
-        courseCode: 'CS-401',
-        hallName: 'Turing Hall',
-        deskNumber: 'TH-C14',
-        examTimestamp: 1795000000,
-      );
+        final checksum2 = ExamCryptography.generateChecksum(
+          passId: 'exam_pass_001',
+          studentId: 'CTZ-2024-8842',
+          courseCode: 'CS-401',
+          hallName: 'Turing Hall',
+          deskNumber: 'TH-C14',
+          examTimestamp: 1795000000,
+        );
 
-      expect(checksum1.length, equals(64));
-      expect(checksum1, equals(checksum2));
-    });
+        expect(checksum1.length, equals(64));
+        expect(checksum1, equals(checksum2));
+      },
+    );
 
     test('verifyChecksum correctly validates authentic payload', () {
       final checksum = ExamCryptography.generateChecksum(
@@ -82,7 +86,8 @@ void main() {
         studentId: 'CTZ-2024-8842',
         courseCode: 'CS-401',
         deskNumber: 'TH-C14',
-        checksum: '7f8a9b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a',
+        checksum:
+            '7f8a9b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a',
       );
 
       expect(token.startsWith('CITYZENS:EXAM:'), isTrue);
@@ -118,7 +123,10 @@ void main() {
       final passes = await repository.getAllPasses();
       final initialArmed = passes.first.isReminderSet;
 
-      final success = await repository.toggleReminder(passes.first.id, !initialArmed);
+      final success = await repository.toggleReminder(
+        passes.first.id,
+        !initialArmed,
+      );
       expect(success, isTrue);
 
       final updated = await repository.getPassById(passes.first.id);
@@ -137,11 +145,14 @@ void main() {
       expect(after?.isVerified, isTrue);
     });
 
-    test('verifyPassTampering confirms integrity of seeded pass record', () async {
-      const passId = 'exam_pass_001';
-      final isValid = await repository.verifyPassTampering(passId);
-      expect(isValid, isTrue);
-    });
+    test(
+      'verifyPassTampering confirms integrity of seeded pass record',
+      () async {
+        const passId = 'exam_pass_001';
+        final isValid = await repository.verifyPassTampering(passId);
+        expect(isValid, isTrue);
+      },
+    );
 
     test('generateHallMatrix accurately identifies user assigned desk', () {
       final pass = ExamHallPassModel(
@@ -193,31 +204,39 @@ void main() {
     });
 
     test('selectPass switches selected pass and synchronizes hall', () {
-      final hopperPass = provider.passes.firstWhere((p) => p.hallName.contains('Hopper'));
+      final hopperPass = provider.passes.firstWhere(
+        (p) => p.hallName.contains('Hopper'),
+      );
       provider.selectPass(hopperPass);
 
       expect(provider.selectedPass?.id, equals(hopperPass.id));
       expect(provider.selectedHall.name, equals('Hopper Auditorium'));
     });
 
-    test('togglePassReminder optimistically updates state and persists', () async {
-      final initialArmed = provider.passes.first.isReminderSet;
-      final ok = await provider.togglePassReminder(provider.passes.first.id);
+    test(
+      'togglePassReminder optimistically updates state and persists',
+      () async {
+        final initialArmed = provider.passes.first.isReminderSet;
+        final ok = await provider.togglePassReminder(provider.passes.first.id);
 
-      expect(ok, isTrue);
-      expect(provider.passes.first.isReminderSet, equals(!initialArmed));
-      expect(provider.selectedPass?.isReminderSet, equals(!initialArmed));
-    });
+        expect(ok, isTrue);
+        expect(provider.passes.first.isReminderSet, equals(!initialArmed));
+        expect(provider.selectedPass?.isReminderSet, equals(!initialArmed));
+      },
+    );
 
-    test('verifyCurrentPass performs SHA-256 verification and marks verified', () async {
-      final passToVerify = provider.passes.firstWhere((p) => !p.isVerified);
-      provider.selectPass(passToVerify);
+    test(
+      'verifyCurrentPass performs SHA-256 verification and marks verified',
+      () async {
+        final passToVerify = provider.passes.firstWhere((p) => !p.isVerified);
+        provider.selectPass(passToVerify);
 
-      final ok = await provider.verifyCurrentPass();
-      expect(ok, isTrue);
-      expect(provider.selectedPass?.isVerified, isTrue);
-      expect(provider.lastVerificationSuccess, isTrue);
-      expect(provider.lastVerificationMessage, contains('authenticated'));
-    });
+        final ok = await provider.verifyCurrentPass();
+        expect(ok, isTrue);
+        expect(provider.selectedPass?.isVerified, isTrue);
+        expect(provider.lastVerificationSuccess, isTrue);
+        expect(provider.lastVerificationMessage, contains('authenticated'));
+      },
+    );
   });
 }

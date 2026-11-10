@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cityzens_app/data/repositories/campus_feed_repository.dart';
 import 'package:cityzens_app/presentation/campus/campus_feed_provider.dart';
+
 import '../helpers/test_database.dart';
 
 void main() {
@@ -22,19 +23,22 @@ void main() {
       expect(provider.posts.first.isLiked, isFalse);
     });
 
-    test('toggleLike optimistically increments like count and toggles state', () async {
-      final postId = provider.posts.first.id;
-      final initialCount = provider.posts.first.likesCount;
+    test(
+      'toggleLike optimistically increments like count and toggles state',
+      () async {
+        final postId = provider.posts.first.id;
+        final initialCount = provider.posts.first.likesCount;
 
-      await provider.toggleLike(postId);
-      expect(provider.posts.first.isLiked, isTrue);
-      expect(provider.posts.first.likesCount, equals(initialCount + 1));
+        await provider.toggleLike(postId);
+        expect(provider.posts.first.isLiked, isTrue);
+        expect(provider.posts.first.likesCount, equals(initialCount + 1));
 
-      // Toggle off
-      await provider.toggleLike(postId);
-      expect(provider.posts.first.isLiked, isFalse);
-      expect(provider.posts.first.likesCount, equals(initialCount));
-    });
+        // Toggle off
+        await provider.toggleLike(postId);
+        expect(provider.posts.first.isLiked, isFalse);
+        expect(provider.posts.first.likesCount, equals(initialCount));
+      },
+    );
 
     test('toggleBookmark toggles post bookmark flag', () async {
       final postId = provider.posts.first.id;
@@ -62,18 +66,24 @@ void main() {
       expect(comments.any((c) => c.content.contains('juniors')), isTrue);
     });
 
-    test('publishNotice prepends newly created dispatch to posts list', () async {
-      final initialCount = provider.posts.length;
+    test(
+      'publishNotice prepends newly created dispatch to posts list',
+      () async {
+        final initialCount = provider.posts.length;
 
-      final success = await provider.publishNotice(
-        title: 'Impeller Engine Optimization Seminar',
-        content: 'Technical analysis of Metal & Vulkan pipeline caching.',
-        category: 'Research Group',
-      );
+        final success = await provider.publishNotice(
+          title: 'Impeller Engine Optimization Seminar',
+          content: 'Technical analysis of Metal & Vulkan pipeline caching.',
+          category: 'Research Group',
+        );
 
-      expect(success, isTrue);
-      expect(provider.posts.length, equals(initialCount + 1));
-      expect(provider.posts.first.title, equals('Impeller Engine Optimization Seminar'));
-    });
+        expect(success, isTrue);
+        expect(provider.posts.length, equals(initialCount + 1));
+        expect(
+          provider.posts.first.title,
+          equals('Impeller Engine Optimization Seminar'),
+        );
+      },
+    );
   });
 }

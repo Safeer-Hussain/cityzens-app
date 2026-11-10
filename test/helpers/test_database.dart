@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:cityzens_app/core/database/app_database.dart';
 import 'package:cityzens_app/core/utils/exam_cryptography.dart';
@@ -8,7 +9,8 @@ Future<AppDatabase> createTestDatabase() async {
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
 
-  final dbName = 'cityzens_test_${DateTime.now().microsecondsSinceEpoch}_${Random().nextInt(100000)}.db';
+  final dbName =
+      'cityzens_test_${DateTime.now().microsecondsSinceEpoch}_${Random().nextInt(100000)}.db';
 
   final db = await openDatabase(
     dbName,
@@ -180,7 +182,9 @@ Future<AppDatabase> createTestDatabase() async {
         'id': 'loan_01',
         'book_id': 'book_01',
         'borrower_id': 'CTZ-2026-8842',
-        'borrow_date': now.subtract(const Duration(days: 9)).millisecondsSinceEpoch,
+        'borrow_date': now
+            .subtract(const Duration(days: 9))
+            .millisecondsSinceEpoch,
         'due_date': now.add(const Duration(days: 5)).millisecondsSinceEpoch,
         'is_returned': 0,
         'renewal_count': 0,
@@ -205,13 +209,48 @@ Future<AppDatabase> createTestDatabase() async {
 
       // Seed 7 Historical Semesters for Safeer Hussain (CGPA 3.94)
       final transcripts = [
-        {'id': 'sem_01', 'semester_name': 'Semester 1 (Fall 2023)', 'credit_hours': 17, 'gpa': 3.92},
-        {'id': 'sem_02', 'semester_name': 'Semester 2 (Spring 2024)', 'credit_hours': 18, 'gpa': 3.95},
-        {'id': 'sem_03', 'semester_name': 'Semester 3 (Fall 2024)', 'credit_hours': 17, 'gpa': 3.90},
-        {'id': 'sem_04', 'semester_name': 'Semester 4 (Spring 2025)', 'credit_hours': 18, 'gpa': 3.96},
-        {'id': 'sem_05', 'semester_name': 'Semester 5 (Fall 2025)', 'credit_hours': 16, 'gpa': 3.94},
-        {'id': 'sem_06', 'semester_name': 'Semester 6 (Spring 2026)', 'credit_hours': 16, 'gpa': 3.98},
-        {'id': 'sem_07', 'semester_name': 'Semester 7 (Fall 2026)', 'credit_hours': 16, 'gpa': 3.92},
+        {
+          'id': 'sem_01',
+          'semester_name': 'Semester 1 (Fall 2023)',
+          'credit_hours': 17,
+          'gpa': 3.92,
+        },
+        {
+          'id': 'sem_02',
+          'semester_name': 'Semester 2 (Spring 2024)',
+          'credit_hours': 18,
+          'gpa': 3.95,
+        },
+        {
+          'id': 'sem_03',
+          'semester_name': 'Semester 3 (Fall 2024)',
+          'credit_hours': 17,
+          'gpa': 3.90,
+        },
+        {
+          'id': 'sem_04',
+          'semester_name': 'Semester 4 (Spring 2025)',
+          'credit_hours': 18,
+          'gpa': 3.96,
+        },
+        {
+          'id': 'sem_05',
+          'semester_name': 'Semester 5 (Fall 2025)',
+          'credit_hours': 16,
+          'gpa': 3.94,
+        },
+        {
+          'id': 'sem_06',
+          'semester_name': 'Semester 6 (Spring 2026)',
+          'credit_hours': 16,
+          'gpa': 3.98,
+        },
+        {
+          'id': 'sem_07',
+          'semester_name': 'Semester 7 (Fall 2026)',
+          'credit_hours': 16,
+          'gpa': 3.92,
+        },
       ];
       for (final t in transcripts) {
         await db.insert('academic_transcripts', t);
