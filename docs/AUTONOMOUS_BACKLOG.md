@@ -24,7 +24,7 @@ This backlog defines 25 granular, production-ready engineering sprints. Promptin
   - Slot reservation workflow with automated collision detection and attendee invitation badges.
   - SQLite persistence for study group bookings.
 
-- [ ] **Sprint 05: Offline Flashcard Deck Builder with SuperMemo-2 (SM-2)**
+- [x] **Sprint 05: Offline Flashcard Deck Builder with SuperMemo-2 (SM-2)**
   - Spaced repetition algorithm computing optimal repetition intervals and ease factors.
   - Category decks for Algorithms, Distributed Systems, and Mobile Architecture.
   - Full-width analytics chart displaying card retention performance.

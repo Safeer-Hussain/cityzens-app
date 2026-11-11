@@ -174,6 +174,48 @@ Future<AppDatabase> createTestDatabase() async {
         )
       ''');
 
+      await db.execute('''
+        CREATE TABLE flashcard_decks (
+          id TEXT PRIMARY KEY,
+          title TEXT NOT NULL,
+          category TEXT NOT NULL,
+          description TEXT NOT NULL,
+          card_count INTEGER NOT NULL DEFAULT 0,
+          mastery_percentage REAL NOT NULL DEFAULT 0.0,
+          color_hex TEXT NOT NULL,
+          created_at INTEGER NOT NULL
+        )
+      ''');
+
+      await db.execute('''
+        CREATE TABLE flashcards (
+          id TEXT PRIMARY KEY,
+          deck_id TEXT NOT NULL,
+          front TEXT NOT NULL,
+          back TEXT NOT NULL,
+          hint TEXT NOT NULL,
+          repetitions INTEGER NOT NULL DEFAULT 0,
+          interval_days INTEGER NOT NULL DEFAULT 1,
+          ease_factor REAL NOT NULL DEFAULT 2.5,
+          next_review_date INTEGER NOT NULL,
+          last_reviewed_date INTEGER,
+          mastery_level TEXT NOT NULL DEFAULT 'learning',
+          created_at INTEGER NOT NULL
+        )
+      ''');
+
+      await db.execute('''
+        CREATE TABLE flashcard_reviews (
+          id TEXT PRIMARY KEY,
+          card_id TEXT NOT NULL,
+          deck_id TEXT NOT NULL,
+          quality INTEGER NOT NULL,
+          interval_days INTEGER NOT NULL,
+          ease_factor REAL NOT NULL,
+          reviewed_at INTEGER NOT NULL
+        )
+      ''');
+
       // Seed core test course
       await db.insert('courses', {
         'id': 'crs_01',
@@ -502,6 +544,200 @@ Future<AppDatabase> createTestDatabase() async {
             .millisecondsSinceEpoch,
         'status': 'confirmed',
       });
+
+      // Seed Flashcard Decks
+      final decks = [
+        {
+          'id': 'deck_algo',
+          'title': 'Algorithms & Complexity',
+          'category': 'Algorithms',
+          'description': 'Asymptotic notations, graph traversals, dynamic programming, and amortized complexity.',
+          'card_count': 4,
+          'mastery_percentage': 75.0,
+          'color_hex': '0xFF0D9488',
+          'created_at': now
+              .subtract(const Duration(days: 14))
+              .millisecondsSinceEpoch,
+        },
+        {
+          'id': 'deck_dist',
+          'title': 'Distributed Systems & Consensus',
+          'category': 'Distributed Systems',
+          'description': 'CAP theorem, Raft consensus, vector clocks, byzantine faults, and two-phase commits.',
+          'card_count': 4,
+          'mastery_percentage': 50.0,
+          'color_hex': '0xFFD97706',
+          'created_at': now
+              .subtract(const Duration(days: 10))
+              .millisecondsSinceEpoch,
+        },
+        {
+          'id': 'deck_mobile',
+          'title': 'Mobile System Architecture',
+          'category': 'Mobile Architecture',
+          'description': 'Impeller rendering pipeline, VSync 120Hz frame scheduling, and Dart generational GC.',
+          'card_count': 4,
+          'mastery_percentage': 50.0,
+          'color_hex': '0xFF2563EB',
+          'created_at': now
+              .subtract(const Duration(days: 7))
+              .millisecondsSinceEpoch,
+        },
+      ];
+
+      for (final d in decks) {
+        await db.insert('flashcard_decks', d);
+      }
+
+      // Seed Flashcards
+      final cards = [
+        {
+          'id': 'fc_algo_01',
+          'deck_id': 'deck_algo',
+          'front': 'What is the amortized time complexity of inserting into a dynamic array that doubles its capacity when full?',
+          'back': 'O(1) amortized. Resizing costs O(N) but occurs only once every N insertions, so total work across N insertions is O(N).',
+          'hint': 'Consider aggregate work across N append operations.',
+          'repetitions': 3,
+          'interval_days': 15,
+          'ease_factor': 2.6,
+          'next_review_date': now
+              .add(const Duration(days: 8))
+              .millisecondsSinceEpoch,
+          'last_reviewed_date': now
+              .subtract(const Duration(days: 7))
+              .millisecondsSinceEpoch,
+          'mastery_level': 'mastered',
+          'created_at': now
+              .subtract(const Duration(days: 14))
+              .millisecondsSinceEpoch,
+        },
+        {
+          'id': 'fc_algo_02',
+          'deck_id': 'deck_algo',
+          'front': 'What is the time complexity difference between Dijkstra algorithm with binary heap vs Fibonacci heap?',
+          'back': 'Binary heap: O((V + E) log V). Fibonacci heap: O(E + V log V), since decrease-key is reduced to O(1) amortized.',
+          'hint':
+              'Focus on the cost of decrease-key operations in dense graphs.',
+          'repetitions': 2,
+          'interval_days': 6,
+          'ease_factor': 2.5,
+          'next_review_date': now
+              .subtract(const Duration(hours: 3))
+              .millisecondsSinceEpoch,
+          'last_reviewed_date': now
+              .subtract(const Duration(days: 6))
+              .millisecondsSinceEpoch,
+          'mastery_level': 'reviewing',
+          'created_at': now
+              .subtract(const Duration(days: 14))
+              .millisecondsSinceEpoch,
+        },
+        {
+          'id': 'fc_dist_01',
+          'deck_id': 'deck_dist',
+          'front': 'Why does the CAP theorem state that consistency and availability cannot both be guaranteed during a network partition?',
+          'back': 'In a network partition, communication between node groups is severed. A node must either reject updates (sacrificing Availability) or accept updates without consensus (sacrificing Consistency).',
+          'hint': 'Consider the decision a node must make when isolated from other replicas.',
+          'repetitions': 3,
+          'interval_days': 12,
+          'ease_factor': 2.5,
+          'next_review_date': now
+              .add(const Duration(days: 5))
+              .millisecondsSinceEpoch,
+          'last_reviewed_date': now
+              .subtract(const Duration(days: 7))
+              .millisecondsSinceEpoch,
+          'mastery_level': 'mastered',
+          'created_at': now
+              .subtract(const Duration(days: 10))
+              .millisecondsSinceEpoch,
+        },
+        {
+          'id': 'fc_dist_02',
+          'deck_id': 'deck_dist',
+          'front': 'In the Raft consensus protocol, what is the role of terms and how are stale leaders handled?',
+          'back': 'Terms act as logical clocks. Each RPC contains the sender term; if a leader or candidate receives a message with a higher term, it immediately steps down to follower.',
+          'hint': 'Logical clock monotonic counters in RPC headers.',
+          'repetitions': 2,
+          'interval_days': 6,
+          'ease_factor': 2.45,
+          'next_review_date': now
+              .subtract(const Duration(hours: 4))
+              .millisecondsSinceEpoch,
+          'last_reviewed_date': now
+              .subtract(const Duration(days: 6))
+              .millisecondsSinceEpoch,
+          'mastery_level': 'reviewing',
+          'created_at': now
+              .subtract(const Duration(days: 10))
+              .millisecondsSinceEpoch,
+        },
+        {
+          'id': 'fc_mobile_01',
+          'deck_id': 'deck_mobile',
+          'front': 'Why does Flutter Impeller eliminate runtime shader compilation jank on Android and iOS?',
+          'back': 'Impeller pre-compiles all pipeline shaders offline at application build time into an immutable shader cache, eliminating runtime SPIR-V/GLSL compilation during first draw.',
+          'hint': 'Ahead-of-Time (AOT) graphics pipeline generation.',
+          'repetitions': 2,
+          'interval_days': 6,
+          'ease_factor': 2.5,
+          'next_review_date': now
+              .add(const Duration(days: 2))
+              .millisecondsSinceEpoch,
+          'last_reviewed_date': now
+              .subtract(const Duration(days: 4))
+              .millisecondsSinceEpoch,
+          'mastery_level': 'reviewing',
+          'created_at': now
+              .subtract(const Duration(days: 7))
+              .millisecondsSinceEpoch,
+        },
+      ];
+
+      for (final c in cards) {
+        await db.insert('flashcards', c);
+      }
+
+      // Seed Reviews
+      final reviews = [
+        {
+          'id': 'rev_01',
+          'card_id': 'fc_algo_01',
+          'deck_id': 'deck_algo',
+          'quality': 5,
+          'interval_days': 15,
+          'ease_factor': 2.6,
+          'reviewed_at': now
+              .subtract(const Duration(days: 6))
+              .millisecondsSinceEpoch,
+        },
+        {
+          'id': 'rev_02',
+          'card_id': 'fc_dist_01',
+          'deck_id': 'deck_dist',
+          'quality': 5,
+          'interval_days': 12,
+          'ease_factor': 2.5,
+          'reviewed_at': now
+              .subtract(const Duration(days: 4))
+              .millisecondsSinceEpoch,
+        },
+        {
+          'id': 'rev_03',
+          'card_id': 'fc_mobile_01',
+          'deck_id': 'deck_mobile',
+          'quality': 4,
+          'interval_days': 6,
+          'ease_factor': 2.5,
+          'reviewed_at': now
+              .subtract(const Duration(days: 2))
+              .millisecondsSinceEpoch,
+        },
+      ];
+
+      for (final r in reviews) {
+        await db.insert('flashcard_reviews', r);
+      }
     },
   );
 

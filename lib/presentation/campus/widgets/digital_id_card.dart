@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../gpa_calculator/gpa_calculator_view.dart';
 import '../../exam/exam_hall_pass_view.dart';
 import '../../study_room/study_room_booking_view.dart';
+import '../../flashcards/flashcard_deck_builder_view.dart';
 
 class DigitalIdCard extends StatelessWidget {
   final VoidCallback? onLongPressVersion;
@@ -325,6 +326,49 @@ class DigitalIdCard extends StatelessWidget {
                           'Peer Study Room Booking (Floors 1-4)',
                           style: TextStyle(
                             color: colors.tertiary,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                // Quick Access 4: Flashcard Deck Builder (SM-2 Spaced Repetition)
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const FlashcardDeckBuilderView(),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: colors.secondary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: colors.secondary.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.psychology_outlined,
+                          size: 14,
+                          color: colors.secondary,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Flashcard Deck Builder (SuperMemo-2 Spaced Repetition)',
+                          style: TextStyle(
+                            color: colors.secondary,
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                           ),

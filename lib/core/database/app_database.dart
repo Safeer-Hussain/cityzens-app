@@ -98,6 +98,48 @@ class AppDatabase {
       )
     ''');
 
+    await _db!.execute('''
+      CREATE TABLE IF NOT EXISTS flashcard_decks (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        category TEXT NOT NULL,
+        description TEXT NOT NULL,
+        card_count INTEGER NOT NULL DEFAULT 0,
+        mastery_percentage REAL NOT NULL DEFAULT 0.0,
+        color_hex TEXT NOT NULL,
+        created_at INTEGER NOT NULL
+      )
+    ''');
+
+    await _db!.execute('''
+      CREATE TABLE IF NOT EXISTS flashcards (
+        id TEXT PRIMARY KEY,
+        deck_id TEXT NOT NULL,
+        front TEXT NOT NULL,
+        back TEXT NOT NULL,
+        hint TEXT NOT NULL,
+        repetitions INTEGER NOT NULL DEFAULT 0,
+        interval_days INTEGER NOT NULL DEFAULT 1,
+        ease_factor REAL NOT NULL DEFAULT 2.5,
+        next_review_date INTEGER NOT NULL,
+        last_reviewed_date INTEGER,
+        mastery_level TEXT NOT NULL DEFAULT 'learning',
+        created_at INTEGER NOT NULL
+      )
+    ''');
+
+    await _db!.execute('''
+      CREATE TABLE IF NOT EXISTS flashcard_reviews (
+        id TEXT PRIMARY KEY,
+        card_id TEXT NOT NULL,
+        deck_id TEXT NOT NULL,
+        quality INTEGER NOT NULL,
+        interval_days INTEGER NOT NULL,
+        ease_factor REAL NOT NULL,
+        reviewed_at INTEGER NOT NULL
+      )
+    ''');
+
     final transcriptCount =
         Sqflite.firstIntValue(
           await _db!.rawQuery('SELECT COUNT(*) FROM academic_transcripts'),
@@ -124,6 +166,15 @@ class AppDatabase {
     if (studyRoomCount == 0) {
       await _seedStudyRooms(_db!);
       await _seedStudyRoomBookings(_db!);
+    }
+
+    final flashcardDeckCount =
+        Sqflite.firstIntValue(
+          await _db!.rawQuery('SELECT COUNT(*) FROM flashcard_decks'),
+        ) ??
+        0;
+    if (flashcardDeckCount == 0) {
+      await _seedFlashcards(_db!);
     }
   }
 
@@ -283,6 +334,48 @@ class AppDatabase {
         attendees TEXT NOT NULL,
         created_at INTEGER NOT NULL,
         status TEXT NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE flashcard_decks (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        category TEXT NOT NULL,
+        description TEXT NOT NULL,
+        card_count INTEGER NOT NULL DEFAULT 0,
+        mastery_percentage REAL NOT NULL DEFAULT 0.0,
+        color_hex TEXT NOT NULL,
+        created_at INTEGER NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE flashcards (
+        id TEXT PRIMARY KEY,
+        deck_id TEXT NOT NULL,
+        front TEXT NOT NULL,
+        back TEXT NOT NULL,
+        hint TEXT NOT NULL,
+        repetitions INTEGER NOT NULL DEFAULT 0,
+        interval_days INTEGER NOT NULL DEFAULT 1,
+        ease_factor REAL NOT NULL DEFAULT 2.5,
+        next_review_date INTEGER NOT NULL,
+        last_reviewed_date INTEGER,
+        mastery_level TEXT NOT NULL DEFAULT 'learning',
+        created_at INTEGER NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE flashcard_reviews (
+        id TEXT PRIMARY KEY,
+        card_id TEXT NOT NULL,
+        deck_id TEXT NOT NULL,
+        quality INTEGER NOT NULL,
+        interval_days INTEGER NOT NULL,
+        ease_factor REAL NOT NULL,
+        reviewed_at INTEGER NOT NULL
       )
     ''');
   }
@@ -598,6 +691,9 @@ class AppDatabase {
     // 8. Seed Study Rooms & Initial Bookings
     await _seedStudyRooms(db);
     await _seedStudyRoomBookings(db);
+
+    // 9. Seed Flashcard Decks & Spaced Repetition Cards
+    await _seedFlashcards(db);
   }
 
   static Future<void> _seedTranscripts(Database db) async {
@@ -1295,6 +1391,383 @@ class AppDatabase {
 
     for (final b in bookings) {
       await db.insert('study_room_bookings', b);
+    }
+  }
+
+  static Future<void> _seedFlashcards(Database db) async {
+    final now = DateTime.now();
+
+    // 1. Seed Decks
+    final decks = [
+      {
+        'id': 'deck_algo',
+        'title': 'Algorithms & Complexity',
+        'category': 'Algorithms',
+        'description': 'Asymptotic notations, graph traversals, dynamic programming, and amortized complexity.',
+        'card_count': 4,
+        'mastery_percentage': 75.0,
+        'color_hex': '0xFF0D9488',
+        'created_at': now
+            .subtract(const Duration(days: 14))
+            .millisecondsSinceEpoch,
+      },
+      {
+        'id': 'deck_dist',
+        'title': 'Distributed Systems & Consensus',
+        'category': 'Distributed Systems',
+        'description': 'CAP theorem, Raft consensus, vector clocks, byzantine faults, and two-phase commits.',
+        'card_count': 4,
+        'mastery_percentage': 50.0,
+        'color_hex': '0xFFD97706',
+        'created_at': now
+            .subtract(const Duration(days: 10))
+            .millisecondsSinceEpoch,
+      },
+      {
+        'id': 'deck_mobile',
+        'title': 'Mobile System Architecture',
+        'category': 'Mobile Architecture',
+        'description': 'Impeller rendering pipeline, VSync 120Hz frame scheduling, and Dart generational GC.',
+        'card_count': 4,
+        'mastery_percentage': 50.0,
+        'color_hex': '0xFF2563EB',
+        'created_at': now
+            .subtract(const Duration(days: 7))
+            .millisecondsSinceEpoch,
+      },
+    ];
+
+    for (final d in decks) {
+      await db.insert('flashcard_decks', d);
+    }
+
+    // 2. Seed Flashcards
+    final cards = [
+      // Algorithms & Complexity Cards
+      {
+        'id': 'fc_algo_01',
+        'deck_id': 'deck_algo',
+        'front': 'What is the amortized time complexity of inserting into a dynamic array that doubles its capacity when full?',
+        'back': 'O(1) amortized. Resizing costs O(N) but occurs only once every N insertions, so total work across N insertions is O(N).',
+        'hint': 'Consider aggregate work across N append operations.',
+        'repetitions': 3,
+        'interval_days': 15,
+        'ease_factor': 2.6,
+        'next_review_date': now
+            .add(const Duration(days: 8))
+            .millisecondsSinceEpoch,
+        'last_reviewed_date': now
+            .subtract(const Duration(days: 7))
+            .millisecondsSinceEpoch,
+        'mastery_level': 'mastered',
+        'created_at': now
+            .subtract(const Duration(days: 14))
+            .millisecondsSinceEpoch,
+      },
+      {
+        'id': 'fc_algo_02',
+        'deck_id': 'deck_algo',
+        'front': 'What is the time complexity difference between Dijkstra algorithm with binary heap vs Fibonacci heap?',
+        'back': 'Binary heap: O((V + E) log V). Fibonacci heap: O(E + V log V), since decrease-key is reduced to O(1) amortized.',
+        'hint': 'Focus on the cost of decrease-key operations in dense graphs.',
+        'repetitions': 2,
+        'interval_days': 6,
+        'ease_factor': 2.5,
+        'next_review_date': now
+            .subtract(const Duration(hours: 3))
+            .millisecondsSinceEpoch,
+        'last_reviewed_date': now
+            .subtract(const Duration(days: 6))
+            .millisecondsSinceEpoch,
+        'mastery_level': 'reviewing',
+        'created_at': now
+            .subtract(const Duration(days: 14))
+            .millisecondsSinceEpoch,
+      },
+      {
+        'id': 'fc_algo_03',
+        'deck_id': 'deck_algo',
+        'front': 'What two fundamental properties must an optimization problem exhibit to be solvable via Dynamic Programming?',
+        'back': '1. Optimal Substructure (an optimal solution contains within it optimal solutions to subproblems). 2. Overlapping Subproblems (the recursive algorithm revisits the same subproblems repeatedly).',
+        'hint':
+            'Richard Bellman formulation for multistage decision processes.',
+        'repetitions': 4,
+        'interval_days': 28,
+        'ease_factor': 2.7,
+        'next_review_date': now
+            .add(const Duration(days: 12))
+            .millisecondsSinceEpoch,
+        'last_reviewed_date': now
+            .subtract(const Duration(days: 16))
+            .millisecondsSinceEpoch,
+        'mastery_level': 'mastered',
+        'created_at': now
+            .subtract(const Duration(days: 14))
+            .millisecondsSinceEpoch,
+      },
+      {
+        'id': 'fc_algo_04',
+        'deck_id': 'deck_algo',
+        'front': 'What is the solution to recurrence T(n) = 2T(n/2) + Theta(n) according to Master Theorem?',
+        'back': 'Theta(n log n). This matches Case 2 where log_b(a) = log_2(2) = 1 and f(n) = Theta(n^1).',
+        'hint': 'Compare n^(log_b a) against f(n).',
+        'repetitions': 1,
+        'interval_days': 1,
+        'ease_factor': 2.36,
+        'next_review_date': now
+            .subtract(const Duration(hours: 1))
+            .millisecondsSinceEpoch,
+        'last_reviewed_date': now
+            .subtract(const Duration(days: 1))
+            .millisecondsSinceEpoch,
+        'mastery_level': 'learning',
+        'created_at': now
+            .subtract(const Duration(days: 14))
+            .millisecondsSinceEpoch,
+      },
+
+      // Distributed Systems & Consensus Cards
+      {
+        'id': 'fc_dist_01',
+        'deck_id': 'deck_dist',
+        'front': 'Why does the CAP theorem state that consistency and availability cannot both be guaranteed during a network partition?',
+        'back': 'In a network partition, communication between node groups is severed. A node must either reject updates (sacrificing Availability) or accept updates without consensus (sacrificing Consistency).',
+        'hint': 'Consider the decision a node must make when isolated from other replicas.',
+        'repetitions': 3,
+        'interval_days': 12,
+        'ease_factor': 2.5,
+        'next_review_date': now
+            .add(const Duration(days: 5))
+            .millisecondsSinceEpoch,
+        'last_reviewed_date': now
+            .subtract(const Duration(days: 7))
+            .millisecondsSinceEpoch,
+        'mastery_level': 'mastered',
+        'created_at': now
+            .subtract(const Duration(days: 10))
+            .millisecondsSinceEpoch,
+      },
+      {
+        'id': 'fc_dist_02',
+        'deck_id': 'deck_dist',
+        'front': 'In the Raft consensus protocol, what is the role of terms and how are stale leaders handled?',
+        'back': 'Terms act as logical clocks. Each RPC contains the sender term; if a leader or candidate receives a message with a higher term, it immediately steps down to follower.',
+        'hint': 'Logical clock monotonic counters in RPC headers.',
+        'repetitions': 2,
+        'interval_days': 6,
+        'ease_factor': 2.45,
+        'next_review_date': now
+            .subtract(const Duration(hours: 4))
+            .millisecondsSinceEpoch,
+        'last_reviewed_date': now
+            .subtract(const Duration(days: 6))
+            .millisecondsSinceEpoch,
+        'mastery_level': 'reviewing',
+        'created_at': now
+            .subtract(const Duration(days: 10))
+            .millisecondsSinceEpoch,
+      },
+      {
+        'id': 'fc_dist_03',
+        'deck_id': 'deck_dist',
+        'front': 'What causal ordering limitation of Lamport Timestamps is overcome by Vector Clocks?',
+        'back': 'Lamport timestamps only guarantee: if a -> b, then L(a) < L(b). But L(a) < L(b) does not imply a -> b. Vector clocks provide an exact isomorphism: V(a) < V(b) if and only if a -> b.',
+        'hint':
+            'Differentiating concurrent events from causally dependent events.',
+        'repetitions': 1,
+        'interval_days': 1,
+        'ease_factor': 2.5,
+        'next_review_date': now
+            .subtract(const Duration(hours: 2))
+            .millisecondsSinceEpoch,
+        'last_reviewed_date': now
+            .subtract(const Duration(days: 1))
+            .millisecondsSinceEpoch,
+        'mastery_level': 'learning',
+        'created_at': now
+            .subtract(const Duration(days: 10))
+            .millisecondsSinceEpoch,
+      },
+      {
+        'id': 'fc_dist_04',
+        'deck_id': 'deck_dist',
+        'front': 'What is the primary vulnerability of Two-Phase Commit (2PC) during a coordinator failure?',
+        'back': '2PC is a blocking protocol. If the coordinator crashes after nodes vote Yes but before Commit/Abort is broadcast, participants remain blocked holding locks indefinitely.',
+        'hint': 'Blocking state when waiting for the coordinator decision.',
+        'repetitions': 3,
+        'interval_days': 14,
+        'ease_factor': 2.6,
+        'next_review_date': now
+            .add(const Duration(days: 4))
+            .millisecondsSinceEpoch,
+        'last_reviewed_date': now
+            .subtract(const Duration(days: 10))
+            .millisecondsSinceEpoch,
+        'mastery_level': 'mastered',
+        'created_at': now
+            .subtract(const Duration(days: 10))
+            .millisecondsSinceEpoch,
+      },
+
+      // Mobile System Architecture Cards
+      {
+        'id': 'fc_mobile_01',
+        'deck_id': 'deck_mobile',
+        'front': 'Why does Flutter Impeller eliminate runtime shader compilation jank on Android and iOS?',
+        'back': 'Impeller pre-compiles all pipeline shaders offline at application build time into an immutable shader cache, eliminating runtime SPIR-V/GLSL compilation during first draw.',
+        'hint': 'Ahead-of-Time (AOT) graphics pipeline generation.',
+        'repetitions': 2,
+        'interval_days': 6,
+        'ease_factor': 2.5,
+        'next_review_date': now
+            .add(const Duration(days: 2))
+            .millisecondsSinceEpoch,
+        'last_reviewed_date': now
+            .subtract(const Duration(days: 4))
+            .millisecondsSinceEpoch,
+        'mastery_level': 'reviewing',
+        'created_at': now
+            .subtract(const Duration(days: 7))
+            .millisecondsSinceEpoch,
+      },
+      {
+        'id': 'fc_mobile_02',
+        'deck_id': 'deck_mobile',
+        'front': 'How does Dart generational garbage collection optimize high-frequency Flutter widget reallocations?',
+        'back': 'The Young Generation uses a semi-space copying scavenger. New short-lived widgets die almost instantly and are collected in parallel without scanning the large Old Generation heap.',
+        'hint': 'Generational hypothesis and semi-space allocation.',
+        'repetitions': 1,
+        'interval_days': 1,
+        'ease_factor': 2.4,
+        'next_review_date': now
+            .subtract(const Duration(hours: 5))
+            .millisecondsSinceEpoch,
+        'last_reviewed_date': now
+            .subtract(const Duration(days: 1))
+            .millisecondsSinceEpoch,
+        'mastery_level': 'learning',
+        'created_at': now
+            .subtract(const Duration(days: 7))
+            .millisecondsSinceEpoch,
+      },
+      {
+        'id': 'fc_mobile_03',
+        'deck_id': 'deck_mobile',
+        'front': 'What is the exact function of hardware VSync pulses in mobile display refresh pipelines?',
+        'back': 'VSync coordinates display swap-buffers with physical panel refresh (e.g. 120Hz = 8.3ms), preventing screen tearing and ensuring frame budget alignment.',
+        'hint': 'Display controller synchronization with render engine rasterization.',
+        'repetitions': 3,
+        'interval_days': 14,
+        'ease_factor': 2.6,
+        'next_review_date': now
+            .add(const Duration(days: 7))
+            .millisecondsSinceEpoch,
+        'last_reviewed_date': now
+            .subtract(const Duration(days: 7))
+            .millisecondsSinceEpoch,
+        'mastery_level': 'mastered',
+        'created_at': now
+            .subtract(const Duration(days: 7))
+            .millisecondsSinceEpoch,
+      },
+      {
+        'id': 'fc_mobile_04',
+        'deck_id': 'deck_mobile',
+        'front': 'What performance advantage does Dart FFI offer over traditional Platform Channels?',
+        'back': 'Dart FFI performs direct synchronous C-function calls in-process via memory pointers with zero serialization overhead, whereas Platform Channels require asynchronous binary message serialization.',
+        'hint': 'Pointer dereference vs thread hopping and serialization.',
+        'repetitions': 2,
+        'interval_days': 6,
+        'ease_factor': 2.55,
+        'next_review_date': now
+            .subtract(const Duration(hours: 1))
+            .millisecondsSinceEpoch,
+        'last_reviewed_date': now
+            .subtract(const Duration(days: 6))
+            .millisecondsSinceEpoch,
+        'mastery_level': 'reviewing',
+        'created_at': now
+            .subtract(const Duration(days: 7))
+            .millisecondsSinceEpoch,
+      },
+    ];
+
+    for (final c in cards) {
+      await db.insert('flashcards', c);
+    }
+
+    // 3. Seed 7 days of review history for retention analytics
+    final reviews = [
+      {
+        'id': 'rev_01',
+        'card_id': 'fc_algo_01',
+        'deck_id': 'deck_algo',
+        'quality': 5,
+        'interval_days': 15,
+        'ease_factor': 2.6,
+        'reviewed_at': now
+            .subtract(const Duration(days: 6))
+            .millisecondsSinceEpoch,
+      },
+      {
+        'id': 'rev_02',
+        'card_id': 'fc_algo_03',
+        'deck_id': 'deck_algo',
+        'quality': 4,
+        'interval_days': 28,
+        'ease_factor': 2.7,
+        'reviewed_at': now
+            .subtract(const Duration(days: 5))
+            .millisecondsSinceEpoch,
+      },
+      {
+        'id': 'rev_03',
+        'card_id': 'fc_dist_01',
+        'deck_id': 'deck_dist',
+        'quality': 5,
+        'interval_days': 12,
+        'ease_factor': 2.5,
+        'reviewed_at': now
+            .subtract(const Duration(days: 4))
+            .millisecondsSinceEpoch,
+      },
+      {
+        'id': 'rev_04',
+        'card_id': 'fc_dist_04',
+        'deck_id': 'deck_dist',
+        'quality': 4,
+        'interval_days': 14,
+        'ease_factor': 2.6,
+        'reviewed_at': now
+            .subtract(const Duration(days: 3))
+            .millisecondsSinceEpoch,
+      },
+      {
+        'id': 'rev_05',
+        'card_id': 'fc_mobile_01',
+        'deck_id': 'deck_mobile',
+        'quality': 4,
+        'interval_days': 6,
+        'ease_factor': 2.5,
+        'reviewed_at': now
+            .subtract(const Duration(days: 2))
+            .millisecondsSinceEpoch,
+      },
+      {
+        'id': 'rev_06',
+        'card_id': 'fc_mobile_03',
+        'deck_id': 'deck_mobile',
+        'quality': 5,
+        'interval_days': 14,
+        'ease_factor': 2.6,
+        'reviewed_at': now
+            .subtract(const Duration(days: 1))
+            .millisecondsSinceEpoch,
+      },
+    ];
+
+    for (final r in reviews) {
+      await db.insert('flashcard_reviews', r);
     }
   }
 }
