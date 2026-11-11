@@ -12,6 +12,7 @@ import '../../data/repositories/campus_feed_repository.dart';
 import '../../data/repositories/scanner_repository.dart';
 import '../../data/repositories/transcript_repository.dart';
 import '../../data/repositories/exam_repository.dart';
+import '../../data/repositories/study_room_repository.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -59,4 +60,5 @@ Future<void> setupServiceLocator({
   );
 
   sl.registerSingleton<ExamRepository>(ExamRepository(database: db));
+  sl.registerSingleton<StudyRoomRepository>(StudyRoomRepository(database: db));
 }

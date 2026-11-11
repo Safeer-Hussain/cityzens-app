@@ -145,6 +145,35 @@ Future<AppDatabase> createTestDatabase() async {
         )
       ''');
 
+      await db.execute('''
+        CREATE TABLE study_rooms (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          floor INTEGER NOT NULL,
+          capacity INTEGER NOT NULL,
+          amenities TEXT NOT NULL,
+          is_available INTEGER NOT NULL DEFAULT 1,
+          photo_asset TEXT NOT NULL
+        )
+      ''');
+
+      await db.execute('''
+        CREATE TABLE study_room_bookings (
+          id TEXT PRIMARY KEY,
+          room_id TEXT NOT NULL,
+          room_name TEXT NOT NULL,
+          floor INTEGER NOT NULL,
+          booked_by_id TEXT NOT NULL,
+          booked_by_name TEXT NOT NULL,
+          purpose TEXT NOT NULL,
+          start_time INTEGER NOT NULL,
+          end_time INTEGER NOT NULL,
+          attendees TEXT NOT NULL,
+          created_at INTEGER NOT NULL,
+          status TEXT NOT NULL
+        )
+      ''');
+
       // Seed core test course
       await db.insert('courses', {
         'id': 'crs_01',
@@ -378,6 +407,101 @@ Future<AppDatabase> createTestDatabase() async {
           'cryptographic_checksum': checksum,
         });
       }
+
+      // Seed Study Rooms
+      final rooms = [
+        {
+          'id': 'sr_101',
+          'name': 'Turing Innovation Pod 101',
+          'floor': 1,
+          'capacity': 4,
+          'amenities': jsonEncode([
+            '4K Presentation Display',
+            'Whiteboard Wall',
+            'Type-C Fast Charging',
+          ]),
+          'is_available': 1,
+          'photo_asset': 'assets/images/study_room_turing.png',
+        },
+        {
+          'id': 'sr_102',
+          'name': 'Lovelace Brainstorm Suite 102',
+          'floor': 1,
+          'capacity': 8,
+          'amenities': jsonEncode([
+            'Interactive Smartboard',
+            'Video Conference Rig',
+            'Acoustic Baffles',
+            'Whiteboard Wall',
+          ]),
+          'is_available': 1,
+          'photo_asset': 'assets/images/study_room_lovelace.png',
+        },
+        {
+          'id': 'sr_201',
+          'name': 'Dijkstra Algorithm Pod 201',
+          'floor': 2,
+          'capacity': 4,
+          'amenities': jsonEncode([
+            'Whiteboard Wall',
+            '4K Presentation Display',
+            'Ergonomic Chairs',
+          ]),
+          'is_available': 1,
+          'photo_asset': 'assets/images/study_room_dijkstra.png',
+        },
+        {
+          'id': 'sr_301',
+          'name': 'Lamport Consensus Hub 301',
+          'floor': 3,
+          'capacity': 6,
+          'amenities': jsonEncode([
+            'Whiteboard Wall',
+            'Ultra-wide Presentation Monitor',
+            'Type-C Fast Charging',
+          ]),
+          'is_available': 1,
+          'photo_asset': 'assets/images/study_room_lamport.png',
+        },
+        {
+          'id': 'sr_401',
+          'name': 'Chomsky Linguistics Alcove 401',
+          'floor': 4,
+          'capacity': 4,
+          'amenities': jsonEncode([
+            'Acoustic Quiet Pod',
+            'Whiteboard Wall',
+            'Ergonomic Recliners',
+          ]),
+          'is_available': 1,
+          'photo_asset': 'assets/images/study_room_chomsky.png',
+        },
+      ];
+
+      for (final r in rooms) {
+        await db.insert('study_rooms', r);
+      }
+
+      // Seed Initial Booking
+      await db.insert('study_room_bookings', {
+        'id': 'sr_book_init_01',
+        'room_id': 'sr_201',
+        'room_name': 'Dijkstra Algorithm Pod 201',
+        'floor': 2,
+        'booked_by_id': 'CTZ-2026-8842',
+        'booked_by_name': 'Safeer Hussain',
+        'purpose': 'Distributed Systems & Raft Consensus Study',
+        'start_time': now.add(const Duration(hours: 2)).millisecondsSinceEpoch,
+        'end_time': now.add(const Duration(hours: 4)).millisecondsSinceEpoch,
+        'attendees': jsonEncode([
+          'safeer@cityzens.edu',
+          'aris.thorne@cityzens.edu',
+        ]),
+        'created_at': now
+            .subtract(const Duration(days: 1))
+            .millisecondsSinceEpoch,
+        'status': 'confirmed',
+      });
     },
   );
 

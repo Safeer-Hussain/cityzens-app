@@ -19,7 +19,7 @@ This backlog defines 25 granular, production-ready engineering sprints. Promptin
   - Direct clipboard copy and Markdown file export options.
   - Unit tests verifying citation formatting compliance.
 
-- [ ] **Sprint 04: Peer Study Room Booking Engine**
+- [x] **Sprint 04: Peer Study Room Booking Engine**
   - Real-time room availability matrix across Campus Floors 1 through 4.
   - Slot reservation workflow with automated collision detection and attendee invitation badges.
   - SQLite persistence for study group bookings.

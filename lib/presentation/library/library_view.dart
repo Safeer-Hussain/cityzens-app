@@ -9,6 +9,7 @@ import '../../data/models/book.dart';
 import '../library/library_provider.dart';
 import 'widgets/book_detail_sheet.dart';
 import 'widgets/citation_export_modal.dart';
+import '../study_room/study_room_booking_view.dart';
 
 class LibraryView extends StatefulWidget {
   const LibraryView({super.key});
@@ -132,6 +133,51 @@ class _LibraryViewState extends State<LibraryView>
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         children: [
+          // Peer Study Room Booking Shortcut
+          InkWell(
+            borderRadius: BorderRadius.circular(10),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const StudyRoomBookingView()),
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: colors.primaryContainer.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: colors.primary.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.meeting_room_rounded,
+                    size: 18,
+                    color: colors.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Peer Study Rooms • Floors 1-4 Availability Matrix',
+                      style: TextStyle(
+                        color: colors.primary,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 12,
+                    color: colors.primary,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
           _buildSearchBar(provider, colors),
           const SizedBox(height: 10),
           _buildCategoryChips(provider, colors),
@@ -264,6 +310,38 @@ class _LibraryViewState extends State<LibraryView>
                           ),
                           onPressed: () =>
                               _showBatchBibliographyModal(context, provider),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: colors.primary,
+                            foregroundColor: colors.onPrimary,
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          icon: const Icon(
+                            Icons.meeting_room_rounded,
+                            size: 14,
+                          ),
+                          label: const Text(
+                            'Book Study Pods (Floors 1-4)',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const StudyRoomBookingView(),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ],

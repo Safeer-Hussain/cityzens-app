@@ -22,6 +22,8 @@ import 'presentation/ai_tutor/ai_tutor_provider.dart';
 import 'presentation/campus/campus_feed_provider.dart';
 import 'presentation/gpa_calculator/gpa_calculator_provider.dart';
 import 'presentation/exam/exam_provider.dart';
+import 'presentation/study_room/study_room_provider.dart';
+import 'data/repositories/study_room_repository.dart';
 import 'presentation/splash/splash_view.dart';
 
 void main() {
@@ -93,6 +95,10 @@ class CityzensApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<ExamProvider>(
           create: (_) => ExamProvider(repository: sl<ExamRepository>()),
+        ),
+        ChangeNotifierProvider<StudyRoomProvider>(
+          create: (_) =>
+              StudyRoomProvider(repository: sl<StudyRoomRepository>()),
         ),
       ],
       child: Consumer<ThemeProvider>(

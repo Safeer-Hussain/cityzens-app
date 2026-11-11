@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../gpa_calculator/gpa_calculator_view.dart';
 import '../../exam/exam_hall_pass_view.dart';
+import '../../study_room/study_room_booking_view.dart';
 
 class DigitalIdCard extends StatelessWidget {
   final VoidCallback? onLongPressVersion;
@@ -280,6 +281,50 @@ class DigitalIdCard extends StatelessWidget {
                           'Exam Hall Pass & Seat Finder',
                           style: TextStyle(
                             color: colors.secondary,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                // Peer Study Room Booking Shortcut Action
+                InkWell(
+                  borderRadius: BorderRadius.circular(8),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const StudyRoomBookingView(),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: colors.tertiary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: colors.tertiary.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.meeting_room_outlined,
+                          size: 14,
+                          color: colors.tertiary,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Peer Study Room Booking (Floors 1-4)',
+                          style: TextStyle(
+                            color: colors.tertiary,
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                           ),

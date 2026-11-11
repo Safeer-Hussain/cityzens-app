@@ -69,6 +69,35 @@ class AppDatabase {
       )
     ''');
 
+    await _db!.execute('''
+      CREATE TABLE IF NOT EXISTS study_rooms (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        floor INTEGER NOT NULL,
+        capacity INTEGER NOT NULL,
+        amenities TEXT NOT NULL,
+        is_available INTEGER NOT NULL DEFAULT 1,
+        photo_asset TEXT NOT NULL
+      )
+    ''');
+
+    await _db!.execute('''
+      CREATE TABLE IF NOT EXISTS study_room_bookings (
+        id TEXT PRIMARY KEY,
+        room_id TEXT NOT NULL,
+        room_name TEXT NOT NULL,
+        floor INTEGER NOT NULL,
+        booked_by_id TEXT NOT NULL,
+        booked_by_name TEXT NOT NULL,
+        purpose TEXT NOT NULL,
+        start_time INTEGER NOT NULL,
+        end_time INTEGER NOT NULL,
+        attendees TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        status TEXT NOT NULL
+      )
+    ''');
+
     final transcriptCount =
         Sqflite.firstIntValue(
           await _db!.rawQuery('SELECT COUNT(*) FROM academic_transcripts'),
@@ -85,6 +114,16 @@ class AppDatabase {
         0;
     if (passCount == 0) {
       await _seedExamPasses(_db!);
+    }
+
+    final studyRoomCount =
+        Sqflite.firstIntValue(
+          await _db!.rawQuery('SELECT COUNT(*) FROM study_rooms'),
+        ) ??
+        0;
+    if (studyRoomCount == 0) {
+      await _seedStudyRooms(_db!);
+      await _seedStudyRoomBookings(_db!);
     }
   }
 
@@ -215,6 +254,35 @@ class AppDatabase {
         reminder_lead_minutes INTEGER NOT NULL DEFAULT 60,
         invigilator_name TEXT NOT NULL,
         instructions TEXT NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE study_rooms (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        floor INTEGER NOT NULL,
+        capacity INTEGER NOT NULL,
+        amenities TEXT NOT NULL,
+        is_available INTEGER NOT NULL DEFAULT 1,
+        photo_asset TEXT NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE study_room_bookings (
+        id TEXT PRIMARY KEY,
+        room_id TEXT NOT NULL,
+        room_name TEXT NOT NULL,
+        floor INTEGER NOT NULL,
+        booked_by_id TEXT NOT NULL,
+        booked_by_name TEXT NOT NULL,
+        purpose TEXT NOT NULL,
+        start_time INTEGER NOT NULL,
+        end_time INTEGER NOT NULL,
+        attendees TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        status TEXT NOT NULL
       )
     ''');
   }
@@ -523,6 +591,13 @@ class AppDatabase {
 
     // 6. Seed Academic Transcripts for Safeer Hussain (CGPA: 3.94)
     await _seedTranscripts(db);
+
+    // 7. Seed Exam Hall Passes
+    await _seedExamPasses(db);
+
+    // 8. Seed Study Rooms & Initial Bookings
+    await _seedStudyRooms(db);
+    await _seedStudyRoomBookings(db);
   }
 
   static Future<void> _seedTranscripts(Database db) async {
@@ -1007,6 +1082,219 @@ class AppDatabase {
         'optical_token': opticalToken,
         'cryptographic_checksum': checksum,
       });
+    }
+  }
+
+  static Future<void> _seedStudyRooms(Database db) async {
+    final rooms = [
+      // Floor 1: Innovation Commons
+      {
+        'id': 'sr_101',
+        'name': 'Turing Innovation Pod 101',
+        'floor': 1,
+        'capacity': 4,
+        'amenities': jsonEncode([
+          '4K Presentation Display',
+          'Whiteboard Wall',
+          'Type-C Fast Charging',
+        ]),
+        'is_available': 1,
+        'photo_asset': 'assets/images/study_room_turing.png',
+      },
+      {
+        'id': 'sr_102',
+        'name': 'Lovelace Brainstorm Suite 102',
+        'floor': 1,
+        'capacity': 8,
+        'amenities': jsonEncode([
+          'Interactive Smartboard',
+          'Video Conference Rig',
+          'Acoustic Baffles',
+          'Whiteboard Wall',
+        ]),
+        'is_available': 1,
+        'photo_asset': 'assets/images/study_room_lovelace.png',
+      },
+      {
+        'id': 'sr_103',
+        'name': 'Shannon Data Lab 103',
+        'floor': 1,
+        'capacity': 6,
+        'amenities': jsonEncode([
+          'Dual Monitor Station',
+          'Gigabit Ethernet',
+          'Power Hub',
+        ]),
+        'is_available': 1,
+        'photo_asset': 'assets/images/study_room_shannon.png',
+      },
+
+      // Floor 2: Software Engineering & Algorithms
+      {
+        'id': 'sr_201',
+        'name': 'Dijkstra Algorithm Pod 201',
+        'floor': 2,
+        'capacity': 4,
+        'amenities': jsonEncode([
+          'Whiteboard Wall',
+          '4K Presentation Display',
+          'Ergonomic Chairs',
+        ]),
+        'is_available': 1,
+        'photo_asset': 'assets/images/study_room_dijkstra.png',
+      },
+      {
+        'id': 'sr_202',
+        'name': 'Knuth Systems Thinktank 202',
+        'floor': 2,
+        'capacity': 10,
+        'amenities': jsonEncode([
+          'Projector 120-inch',
+          'Microphone Array',
+          'Surround Audio',
+          'Dual Whiteboard',
+        ]),
+        'is_available': 1,
+        'photo_asset': 'assets/images/study_room_knuth.png',
+      },
+      {
+        'id': 'sr_203',
+        'name': 'Hopper Compiler Lab 203',
+        'floor': 2,
+        'capacity': 6,
+        'amenities': jsonEncode([
+          'Whiteboard Wall',
+          'Video Conference Rig',
+          'Ergonomic Chairs',
+        ]),
+        'is_available': 1,
+        'photo_asset': 'assets/images/study_room_hopper.png',
+      },
+
+      // Floor 3: Architecture & Distributed Systems
+      {
+        'id': 'sr_301',
+        'name': 'Lamport Consensus Hub 301',
+        'floor': 3,
+        'capacity': 6,
+        'amenities': jsonEncode([
+          'Whiteboard Wall',
+          'Ultra-wide Presentation Monitor',
+          'Type-C Fast Charging',
+        ]),
+        'is_available': 1,
+        'photo_asset': 'assets/images/study_room_lamport.png',
+      },
+      {
+        'id': 'sr_302',
+        'name': 'Hamilton Mission Room 302',
+        'floor': 3,
+        'capacity': 12,
+        'amenities': jsonEncode([
+          '4K Quad-Display Wall',
+          'Dual Video Conference Rig',
+          'Podium Microphone',
+          'Soundproof Paneling',
+        ]),
+        'is_available': 1,
+        'photo_asset': 'assets/images/study_room_hamilton.png',
+      },
+      {
+        'id': 'sr_303',
+        'name': 'Von Neumann Quantum Cell 303',
+        'floor': 3,
+        'capacity': 4,
+        'amenities': jsonEncode([
+          'Whiteboard Wall',
+          'High-Power Workstations',
+          'Wireless Casting',
+        ]),
+        'is_available': 1,
+        'photo_asset': 'assets/images/study_room_neumann.png',
+      },
+
+      // Floor 4: Executive Research & Postgraduate
+      {
+        'id': 'sr_401',
+        'name': 'Chomsky Linguistics Alcove 401',
+        'floor': 4,
+        'capacity': 4,
+        'amenities': jsonEncode([
+          'Acoustic Quiet Pod',
+          'Whiteboard Wall',
+          'Ergonomic Recliners',
+        ]),
+        'is_available': 1,
+        'photo_asset': 'assets/images/study_room_chomsky.png',
+      },
+      {
+        'id': 'sr_402',
+        'name': 'Gödel Logic Observatory 402',
+        'floor': 4,
+        'capacity': 8,
+        'amenities': jsonEncode([
+          'Panoramic City View',
+          'Interactive Smartboard',
+          'Polycom Conference Hub',
+          'Espresso Bar Access',
+        ]),
+        'is_available': 1,
+        'photo_asset': 'assets/images/study_room_godel.png',
+      },
+    ];
+
+    for (final r in rooms) {
+      await db.insert('study_rooms', r);
+    }
+  }
+
+  static Future<void> _seedStudyRoomBookings(Database db) async {
+    final now = DateTime.now();
+
+    final bookings = [
+      {
+        'id': 'sr_book_init_01',
+        'room_id': 'sr_201',
+        'room_name': 'Dijkstra Algorithm Pod 201',
+        'floor': 2,
+        'booked_by_id': 'CTZ-2026-8842',
+        'booked_by_name': 'Safeer Hussain',
+        'purpose': 'Distributed Systems & Raft Consensus Study',
+        'start_time': now.add(const Duration(hours: 2)).millisecondsSinceEpoch,
+        'end_time': now.add(const Duration(hours: 4)).millisecondsSinceEpoch,
+        'attendees': jsonEncode([
+          'safeer@cityzens.edu',
+          'aris.thorne@cityzens.edu',
+        ]),
+        'created_at': now
+            .subtract(const Duration(days: 1))
+            .millisecondsSinceEpoch,
+        'status': 'confirmed',
+      },
+      {
+        'id': 'sr_book_init_02',
+        'room_id': 'sr_102',
+        'room_name': 'Lovelace Brainstorm Suite 102',
+        'floor': 1,
+        'booked_by_id': 'CTZ-2026-4419',
+        'booked_by_name': 'Elena Rostova',
+        'purpose': 'Autonomous Robotics Team Sync',
+        'start_time': now.add(const Duration(hours: 1)).millisecondsSinceEpoch,
+        'end_time': now.add(const Duration(hours: 3)).millisecondsSinceEpoch,
+        'attendees': jsonEncode([
+          'elena@cityzens.edu',
+          'marcus@cityzens.edu',
+          'chen@cityzens.edu',
+        ]),
+        'created_at': now
+            .subtract(const Duration(hours: 5))
+            .millisecondsSinceEpoch,
+        'status': 'confirmed',
+      },
+    ];
+
+    for (final b in bookings) {
+      await db.insert('study_room_bookings', b);
     }
   }
 }
